@@ -1,0 +1,59 @@
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+
+//dotnet add package System.Net.Http.Json
+public class NlToSqlService
+{
+    private readonly HttpClient _httpClient;
+   
+    public NlToSqlService(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+    }
+
+    public async Task<string> ConvertToSqlAsync(string naturalLanguage)
+    {
+        if (string.IsNullOrWhiteSpace(naturalLanguage))
+        {
+            return string.Empty;
+        }
+        // read file content from sqlschema.txt file 
+        var sqlSchema = await File.ReadAllTextAsync("sqlschema.txt");
+
+        var request = new
+        {
+            model = "llama3.2",
+            messages = new[]
+            {
+                new { role = "system", content = string.Format("As a professional sql developer, only sql queries should be in response without extra things or descriptions because this will be input for SQL playground. Assume I have a DB with this structure:{0}" ,sqlSchema) },
+                new { role = "user", content = naturalLanguage.ToString() }
+            },
+            stream = false,
+        };
+
+         var req = new HttpRequestMessage(HttpMethod.Post, "http://localhost:11434/api/chat");
+        //req.Headers.Add("Content-Type", "application/json");
+        req.Content = JsonContent.Create(request);
+        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        var response = await _httpClient.SendAsync(req);
+
+        var result = await response.Content.ReadFromJsonAsync<OpenAiResponse>();
+        return result?.Message?.content ?? string.Empty;
+    }
+
+    private class OpenAiResponse
+    {
+        public message Message { get; set; }
+        public string Model { get; set; }
+
+    }
+    private class message
+    {
+        public string role { get; set; }
+
+        public string content { get; set; }
+    }
+}

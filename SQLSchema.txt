@@ -1,0 +1,1 @@
+﻿create table productorders (Id int, Ordrerdate datetime, Orderstatus varchar(20), Noofitems int );

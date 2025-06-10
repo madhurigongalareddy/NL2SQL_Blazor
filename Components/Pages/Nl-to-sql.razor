@@ -1,0 +1,20 @@
+﻿@page "/nl-to-sql"
+@rendermode InteractiveServer
+@inject NlToSqlService NlToSqlService
+
+<h3>Natural Language to SQL</h3>
+<input @bind="userInput" placeholder="Enter your question..." />
+<button @onclick="Convert">Convert</button>
+
+<p>SQL Output:</p>
+<pre>@sqlOutput</pre>
+
+@code {
+    private string userInput;
+    private string sqlOutput;
+
+    private async Task Convert()
+    {
+        sqlOutput = await NlToSqlService.ConvertToSqlAsync(userInput);
+    }
+}
