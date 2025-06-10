@@ -33,7 +33,7 @@ public class NlToSqlService
             stream = false,
         };
 
-         var req = new HttpRequestMessage(HttpMethod.Post, "http://localhost:11434/api/chat");
+         var req = new HttpRequestMessage(HttpMethod.Post, "http://10.143.62.231:11434/api/chat");
         //req.Headers.Add("Content-Type", "application/json");
         req.Content = JsonContent.Create(request);
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
