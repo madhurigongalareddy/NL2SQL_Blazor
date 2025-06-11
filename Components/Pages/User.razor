@@ -1,0 +1,93 @@
+﻿@page "/users"
+@inject UserService UserService
+@rendermode InteractiveServer
+@using NL2SQL_Blazor.Components.Models 
+
+<h3>User List</h3>
+
+@if (users == null)
+{
+    <p><span class="spinner-border spinner-border-sm"></span> Loading...</p>
+}
+else if (users.Count == 0)
+{
+    <p>No users found.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.UserId</td>
+                    <td>@user.Username</td>
+                    <td>
+                        @if (editingUserId == user.UserId)
+                        {
+                            <select class="form-select" @bind="selectedRole">
+                                @foreach (var role in roles)
+                                {
+                                    <option value="@role">@role</option>
+                                }
+                            </select>
+                        }
+                        else
+                        {
+                            @user.Role
+                        }
+                    </td>
+                    <td>
+                        @if (editingUserId == user.UserId)
+                        {
+                            <button class="btn btn-sm btn-success me-1" @onclick="() => SaveRole(user)">Save</button>
+                            <button class="btn btn-sm btn-secondary" @onclick="CancelEdit">Cancel</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-sm btn-primary" @onclick="() => EditRole(user)">Edit</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@code {
+    private List<NL2SQL_Blazor.Components.Models.User> users;
+    private readonly List<string> roles = new() { "View", "Write" };
+    private int? editingUserId = null;
+    private string selectedRole;
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await UserService.GetUsersAsync();
+    }
+
+    private void EditRole(NL2SQL_Blazor.Components.Models.User user)
+    {
+        editingUserId = user.UserId;
+        selectedRole = user.Role;
+    }
+
+    private void CancelEdit()
+    {
+        editingUserId = null;
+        selectedRole = null;
+    }
+
+    private async Task SaveRole(NL2SQL_Blazor.Components.Models.User user)
+    {
+        user.Role = selectedRole;
+        editingUserId = null;
+        selectedRole = null;
+        await UserService.UpdateUserRoleAsync(user.UserId, user.Role);
+    }
+}

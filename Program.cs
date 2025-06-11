@@ -10,6 +10,7 @@ builder.Services.AddHttpClient();
 // Register the NlToSqlService as a scoped service
 builder.Services.AddScoped<NlToSqlService>();
 builder.Services.AddScoped<AuthenticationService>();
+builder.Services.AddScoped<UserService>();
 
 
 

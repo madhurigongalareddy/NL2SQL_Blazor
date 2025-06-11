@@ -1,7 +1,11 @@
 ﻿@page "/home"
+@inject AuthenticationService AuthService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Hello, @AuthService.CurrentUsername!</h1>
 
-Welcome to your new app.
+Welcome.
+
