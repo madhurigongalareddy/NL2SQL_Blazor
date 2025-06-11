@@ -1,6 +1,7 @@
 ﻿@page "/nl-to-sql"
 @rendermode InteractiveServer
 @inject NlToSqlService NlToSqlService
+@using System.Data
 
 <h3>Natural Language to SQL</h3>
 <input @bind="userInput" placeholder="Enter your question..." />
@@ -25,12 +26,51 @@
 }
 
 <p>SQL Output:</p>
-<pre>@sqlOutput</pre>
+<textarea style="width: 600px; height : 100px;">@sqlOutput</textarea>
+
+<button class="mt-2 btn btn-success" @onclick="ExecuteSql">
+    @if (isExecuting)
+    {
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <span class="visually-hidden">Executing...</span>
+    }
+    else
+    {
+        <span>Execute SQL</span>
+    }
+</button>
+
+@if (sqlResult != null)
+{
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                @foreach (DataColumn col in sqlResult.Columns)
+                {
+                    <th>@col.ColumnName</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (DataRow row in sqlResult.Rows)
+            {
+                <tr>
+                    @foreach (var item in row.ItemArray)
+                    {
+                        <td>@item</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
     private string userInput;
     private string sqlOutput;
     private bool isLoading = false;
+    private bool isExecuting = false;
+    private DataTable sqlResult;
 
     private async Task Convert()
     {
@@ -43,6 +83,20 @@
         finally
         {
             isLoading = false;
+        }
+    }
+
+    private async Task ExecuteSql()
+    {
+        isExecuting = true;
+        sqlResult = null;
+        try
+        {
+            sqlResult = await NlToSqlService.ExecuteSqlAsync(sqlOutput);
+        }
+        finally
+        {
+            isExecuting = false;
         }
     }
 }
