@@ -11,7 +11,3 @@ public class AuthenticationService
         return Task.FromResult(username == "admin" && password == "password");
     }
 }
-
-//< NavLink href = "login" Match = "NavLinkMatch.All" >
-//    < span class= "oi oi-account-login" aria - hidden = "true" ></ span > Login
-//</ NavLink >

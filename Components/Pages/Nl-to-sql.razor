@@ -4,7 +4,25 @@
 
 <h3>Natural Language to SQL</h3>
 <input @bind="userInput" placeholder="Enter your question..." />
-<button @onclick="Convert">Convert</button>
+<button @onclick="Convert" disabled="@isLoading">
+    @if (isLoading)
+    {
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <span class="visually-hidden">Loading...</span>
+    }
+    else
+    {
+        <span>Convert</span>
+    }
+</button>
+
+@if (isLoading)
+{
+    <div class="mt-2 text-primary">
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Processing...
+    </div>
+}
 
 <p>SQL Output:</p>
 <pre>@sqlOutput</pre>
@@ -12,9 +30,19 @@
 @code {
     private string userInput;
     private string sqlOutput;
+    private bool isLoading = false;
 
     private async Task Convert()
     {
-        sqlOutput = await NlToSqlService.ConvertToSqlAsync(userInput);
+        isLoading = true;
+        sqlOutput = string.Empty;
+        try
+        {
+            sqlOutput = await NlToSqlService.ConvertToSqlAsync(userInput);
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 }

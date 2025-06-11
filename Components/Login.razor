@@ -5,28 +5,59 @@
 @layout Components.Layout.LoginLayout
 @rendermode InteractiveServer
 
-<h3>Login</h3>
+<style>
+    .login-bg {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .login-card {
+        min-width: 350px;
+        max-width: 400px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+        border-radius: 1rem;
+        padding: 2rem 2rem 1.5rem 2rem;
+        background: #fff;
+    }
+    .login-title {
+        font-weight: 700;
+        color: #2575fc;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    .login-btn {
+        width: 100%;
+        font-weight: 600;
+    }
+</style>
 
-@if (!string.IsNullOrEmpty(ErrorMessage))
-{
-    <div class="alert alert-danger">@ErrorMessage</div>
-}
+<div class="login-bg">
+    <div class="login-card">
+        <div class="login-title">Sign In</div>
 
-<EditForm Model="loginModel" OnValidSubmit="HandleLogin" FormName="loginForm">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="alert alert-danger text-center">@ErrorMessage</div>
+        }
 
-    <div class="mb-3">
-        <label for="username" class="form-label">Username</label>
-        <InputText id="username" class="form-control" @bind-Value="loginModel.Username" />
+        <EditForm Model="loginModel" OnValidSubmit="HandleLogin" FormName="loginForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <InputText id="username" class="form-control" @bind-Value="loginModel.Username" autocomplete="username" />
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" autocomplete="current-password" />
+            </div>
+            <button type="submit" class="btn btn-primary login-btn">Login</button>
+        </EditForm>
     </div>
-    <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
-    </div>
-    <button type="submit" class="btn btn-primary">Login</button>
-</EditForm>
-
+</div>
 
 @code {
     private LoginModel loginModel = new();

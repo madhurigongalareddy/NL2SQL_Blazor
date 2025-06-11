@@ -3,7 +3,6 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-//dotnet add package System.Net.Http.Json
 public class NlToSqlService
 {
     private readonly HttpClient _httpClient;
@@ -15,33 +14,39 @@ public class NlToSqlService
 
     public async Task<string> ConvertToSqlAsync(string naturalLanguage)
     {
-        if (string.IsNullOrWhiteSpace(naturalLanguage))
+        try
         {
-            return string.Empty;
-        }
-        // read file content from sqlschema.txt file 
-        var sqlSchema = await File.ReadAllTextAsync("sqlschema.txt");
-
-        var request = new
-        {
-            model = "llama3.2",
-            messages = new[]
+            if (string.IsNullOrWhiteSpace(naturalLanguage))
             {
+                return string.Empty;
+            }
+            // read file content from sqlschema.txt file 
+            var sqlSchema = await File.ReadAllTextAsync("sqlschema.txt");
+
+            var request = new
+            {
+                model = "llama3.2",
+                messages = new[]
+                {
                 new { role = "system", content = string.Format("As a professional sql developer, only sql queries should be in response without extra things or descriptions because this will be input for SQL playground. Assume I have a DB with this structure:{0}" ,sqlSchema) },
                 new { role = "user", content = naturalLanguage.ToString() }
             },
-            stream = false,
-        };
+                stream = false,
+            };
 
-         var req = new HttpRequestMessage(HttpMethod.Post, "http://10.143.62.231:11434/api/chat");
-        //req.Headers.Add("Content-Type", "application/json");
-        req.Content = JsonContent.Create(request);
-        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var req = new HttpRequestMessage(HttpMethod.Post, "http://10.143.62.231:11434/api/chat");
+            req.Content = JsonContent.Create(request);
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await _httpClient.SendAsync(req);
+            var response = await _httpClient.SendAsync(req);
 
-        var result = await response.Content.ReadFromJsonAsync<OpenAiResponse>();
-        return result?.Message?.content ?? string.Empty;
+            var result = await response.Content.ReadFromJsonAsync<OpenAiResponse>();
+            return result?.Message?.content ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            return $"Error: {ex.Message}";
+        }
     }
 
     private class OpenAiResponse
