@@ -7,6 +7,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<NlToSqlService>();
+builder.Services.AddScoped<AuthenticationService>();
+
 
 
 var app = builder.Build();
