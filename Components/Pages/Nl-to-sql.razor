@@ -3,19 +3,54 @@
 @inject NlToSqlService NlToSqlService
 @using System.Data
 
+<style>
+.result-table-container {
+    height: 500px;
+    width: 1000px;
+    overflow: auto;
+    border: 1px solid #1976d2;
+    background: #f5f7fa;
+    padding: 8px;
+    --border-radius: 6px;
+}
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 980px;
+}
+.result-table th, .result-table td {
+    border: 1px solid #1976d2;
+    padding: 6px 10px;
+    text-align: left;
+}
+.result-table th {
+    background-color: #1976d2;
+    color: #fff;
+}
+.result-table tr:nth-child(even) {
+    background-color: #e3eafc;
+}
+.result-table tr:nth-child(odd) {
+    background-color: #fff;
+}
+</style>
+
+
 <h3>Natural Language to SQL</h3>
-<input @bind="userInput" placeholder="Enter your question..." />
-<button @onclick="Convert" disabled="@isLoading">
-    @if (isLoading)
-    {
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        <span class="visually-hidden">Loading...</span>
-    }
-    else
-    {
-        <span>Convert</span>
-    }
-</button>
+
+<table cellspacing="1" cellpadding="2">
+    <tr>
+        <td>
+            <textarea @bind="userInput" placeholder="Enter your question..." style="width: 600px; height :75px;"></textarea>
+        </td>
+        <td>
+            <button class="mt-2 btn btn-primary" @onclick="Convert" disabled="@isLoading">                
+                <span>Convert</span>
+            </button>
+        </td>
+    </tr>
+</table>
+
 
 @if (isLoading)
 {
@@ -23,51 +58,72 @@
         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Processing...
     </div>
-}
-
-<p>SQL Output:</p>
-<textarea style="width: 600px; height : 100px;">@sqlOutput</textarea>
-
-<button class="mt-2 btn btn-success" @onclick="ExecuteSql">
-    @if (isExecuting)
-    {
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        <span class="visually-hidden">Executing...</span>
-    }
-    else
-    {
-        <span>Execute SQL</span>
-    }
-</button>
-
-@if (sqlResult != null)
+} 
+@if(!string.IsNullOrEmpty(sqlOutput) && !isLoading)
 {
-    <table class="table table-bordered mt-3">
-        <thead>
-            <tr>
-                @foreach (DataColumn col in sqlResult.Columns)
-                {
-                    <th>@col.ColumnName</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (DataRow row in sqlResult.Rows)
-            {
-                <tr>
-                    @foreach (var item in row.ItemArray)
+    <table>
+        <tr><td><p>SQL Output:</p></td></tr>
+        <tr>
+            <td>
+                <textarea style="width: 600px; height : 100px;" @bind = "sqlOutput"></textarea>
+            </td>
+            <td>
+                <button class="mt-2 btn btn-primary" @onclick="ExecuteSql" disabled="@isExecuting">
+                    @if (isExecuting)
                     {
-                        <td>@item</td>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="visually-hidden">Executing...</span>
                     }
-                </tr>
-            }
-        </tbody>
-    </table>
+                    else
+                    {
+                        <span>Execute SQL</span>
+                    }
+                </button>
+            </td>
+        </tr>
+        @if(!string.IsNullOrEmpty(alternativeCmd))
+        {
+            <tr>
+                <td colspan="2"><p>Alternative Commands:</p><label>@alternativeCmd</label></td>
+            </tr>
+        }
+    </table> 
+
+    @if (sqlResult != null)
+    {
+        <div class="result-table-container">
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        @foreach (DataColumn col in sqlResult.Columns)
+                        {
+                            <th>@col.ColumnName</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (DataRow row in sqlResult.Rows)
+                    {
+                        <tr>
+                            @foreach (var item in row.ItemArray)
+                            {
+                                <td>@item</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 }
 
 @code {
+
     private string userInput;
+    private string result;
     private string sqlOutput;
+    private string[] commands;
+    private string alternativeCmd;
     private bool isLoading = false;
     private bool isExecuting = false;
     private DataTable sqlResult;
@@ -76,9 +132,19 @@
     {
         isLoading = true;
         sqlOutput = string.Empty;
+        sqlResult = new DataTable();
         try
         {
-            sqlOutput = await NlToSqlService.ConvertToSqlAsync(userInput);
+            result = await NlToSqlService.ConvertToSqlAsync(userInput);
+            commands = result.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            if(commands.Length == 0)
+            {
+                sqlOutput = "No SQL commands generated.";
+                return;
+            }
+            sqlOutput = commands[0].Trim(); // Take only the first SQL statement
+            if(commands.Length > 1)
+                alternativeCmd = string.Join("; ", commands.Skip(1)).Trim(); // Join remaining commands as alternatives
         }
         finally
         {
@@ -89,7 +155,6 @@
     private async Task ExecuteSql()
     {
         isExecuting = true;
-        sqlResult = null;
         try
         {
             sqlResult = await NlToSqlService.ExecuteSqlAsync(sqlOutput);
