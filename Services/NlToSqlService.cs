@@ -26,6 +26,7 @@ public class NlToSqlService
             {
                 return string.Empty;
             }
+
             // read file content from sqlschema.txt file 
             var sqlSchema = await File.ReadAllTextAsync("sqlschema.txt");
 
@@ -40,15 +41,28 @@ public class NlToSqlService
                 stream = false,
             };
 
-            var req = new HttpRequestMessage(HttpMethod.Post, "http://10.143.62.231:11434/api/chat");
+            var req = new HttpRequestMessage(HttpMethod.Post, "http://10.143.60.81:11434/api/chat");
             req.Content = JsonContent.Create(request);
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var response = await _httpClient.SendAsync(req);
+            var rawContent = string.Empty;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
 
-            var result = await response.Content.ReadFromJsonAsync<OpenAiResponse>();
-            return result?.Message?.content ?? string.Empty;
-            //return "select top 5 claimid,referralid,enrollid,affiliationid,facilitycode,memid,startdate,enddate from claim"; // Placeholder for actual implementation
+                var result = await response.Content.ReadFromJsonAsync<OpenAiResponse>();
+                rawContent = result?.Message?.content ?? string.Empty;
+            }
+            else
+            {
+                rawContent = response.Content.ReadAsStringAsync().Result;
+            }
+             
+            return ExtractSqlCommand(rawContent);
+
+            //var rawContent = "```sql\nSELECT COUNT(*)\nFROM claim\nWHERE referralid = 'your_referralid_here';\n\nSELECT COUNT(*)\nFROM claim\nWHERE enrollid = your_enrollid_here;\n```";
+
+            //return "select top 5 claimid, referralid, enrollid, affiliationid, facilitycode, memid, startdate, enddate from claim"; // Placeholder for actual implementation
         }
         catch (Exception ex)
         {
@@ -67,8 +81,29 @@ public class NlToSqlService
         return dataTable;
     }
 
+    private static string ExtractSqlCommand(string content)
+    {
+        if (string.IsNullOrWhiteSpace(content))
+            return string.Empty;
 
-    private class OpenAiResponse
+        // Split by semicolon, remove empty entries, trim each command
+        var commands = content
+            .Replace("\n", " ")
+            .Replace("\r", " ")
+            .Replace("\t", " ")
+            .Replace("sql", " ")
+            .Replace("```", " ")
+            .Replace("  ", " ")
+            .Split(';')
+            .Select(cmd => cmd.Trim())
+            .Where(cmd => !string.IsNullOrWhiteSpace(cmd))
+            .Select(cmd => cmd.EndsWith(";") ? cmd : cmd + ";");
+
+        // Join commands with a newline for readability
+        return string.Join("\n", commands);
+    }
+
+private class OpenAiResponse
     {
         public message Message { get; set; }
         public string Model { get; set; }
