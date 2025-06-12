@@ -35,7 +35,7 @@ public class NlToSqlService
                 model = "llama3.2",
                 messages = new[]
                 {
-                new { role = "system", content = string.Format("As a professional sql developer, only sql queries should be in response without extra things or descriptions because this will be input for SQL playground. Assume I have a DB with this structure:{0}" ,sqlSchema) },
+                new { role = "system", content = string.Format("As a professional sql developer, only sql queries should be in response without extra things or descriptions because this will be input for Microsoft SQL Server. Assume I have a DB with this structure:{0}" ,sqlSchema) },
                 new { role = "user", content = naturalLanguage.ToString() }
             },
                 stream = false,
