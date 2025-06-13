@@ -1,4 +1,5 @@
-CREATE TABLE claim (claimid INTEGER, referralid VARCHAR(30), enrollid INTEGER, startdate TIMESTAMP, enddate TIMESTAMP, totalamt NUMERIC(18,2), status VARCHAR(20), planid INTEGER, paiddate TIMESTAMP);
+CREATE TABLE claim (claimid INTEGER, referralid VARCHAR(30), enrollid INTEGER, startdate TIMESTAMP, 
+enddate TIMESTAMP, totalamt NUMERIC(18,2), status VARCHAR(20), planid INTEGER, paiddate TIMESTAMP);
 
 CREATE TABLE claim837 (claimid INTEGER, billingprovname VARCHAR(50), billingprovidentifier CHAR(80));
 

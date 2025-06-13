@@ -33,7 +33,7 @@ public class NLQueryEngine
                 messages = new[]
                 {
                     new { role = "system", content = string.Format($"As a professional {queryLanguage} developer, only {queryLanguage} queries should be in response " +
-                    $"without extra things or descriptions because this will be input for Database Server. Assume I have a database with this structure:{0}" ,sqlSchema) },
+                    $"without extra things or descriptions because this will be input for Database Server. Assume I have a database with this structure:{sqlSchema}") },
                     new { role = "user", content = naturalLanguage.ToString() }
                 },
                 stream = false,
