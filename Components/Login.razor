@@ -31,6 +31,18 @@
         width: 100%;
         font-weight: 600;
     }
+    .sso-btn {
+        width: 100%;
+        font-weight: 600;
+        margin-top: 0.5rem;
+        background: #fff;
+        color: #2575fc;
+        border: 2px solid #2575fc;
+    }
+    .sso-btn:hover {
+        background: #2575fc;
+        color: #fff;
+    }
 </style>
 
 <div class="login-bg">
@@ -56,6 +68,12 @@
             </div>
             <button type="submit" class="btn btn-primary login-btn">Login</button>
         </EditForm>
+        <div class="text-center my-2" style="font-weight: 500; color: #888; font-size: 0.95rem;">Or sign in with</div>
+        <EditForm Model="loginModel" OnValidSubmit="HandleSsoLogin" FormName="ssoForm">
+            <button class="btn sso-btn" type="submit" disabled>
+                Login with SSO
+            </button>
+        </EditForm>
     </div>
 </div>
 
@@ -74,6 +92,11 @@
         {
             ErrorMessage = "Invalid username or password.";
         }
+    }
+
+    private void HandleSsoLogin()
+    {
+        Navigation.NavigateTo("/sso-login", forceLoad: true);
     }
 
     public class LoginModel
