@@ -10,13 +10,13 @@ public class UserService
     {
         var users = new List<User>
         {
-            new User { UserId = 1, Username = "admin", Role = "Write" },
-            new User { UserId = 2, Username = "user1", Role = "View" },
-            new User { UserId = 3, Username = "user2", Role = "View" }
+            new User { UserId = 1, Username = "admin", ProductName = "Claims" },
+            new User { UserId = 2, Username = "user1", ProductName = "Member" },
+            new User { UserId = 3, Username = "user2", ProductName = "Provider" }
         };
         return Task.FromResult(users);
     }
-    public Task UpdateUserRoleAsync(int userId, string newRole)
+    public Task UpdateUserRoleAsync(int userId, string productName)
     {
         // Update the user role in your data source.
         // For demo, do nothing or update your in-memory list.
