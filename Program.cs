@@ -1,5 +1,4 @@
 using NL2SQL_Blazor.Components;
-using NL2SQL_Blazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
