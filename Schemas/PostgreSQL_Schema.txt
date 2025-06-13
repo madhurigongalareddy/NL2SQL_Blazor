@@ -1,0 +1,37 @@
+CREATE TABLE claim (claimid INTEGER, referralid VARCHAR(30), enrollid INTEGER, startdate TIMESTAMP, enddate TIMESTAMP, totalamt NUMERIC(18,2), status VARCHAR(20), planid INTEGER, paiddate TIMESTAMP);
+
+CREATE TABLE claim837 (claimid INTEGER, billingprovname VARCHAR(50), billingprovidentifier CHAR(80));
+
+CREATE TABLE Claim837Adjustment (ClaimId INTEGER, FrequencyCode CHAR(1), ReqType VARCHAR(10), Status VARCHAR(50));
+
+CREATE TABLE ClaimAdjustment (ClaimId INTEGER, Payer INTEGER, ClaimAdjustmentGroupCode VARCHAR(50), HipaaAdjReasonCodeId INTEGER, Amount NUMERIC(18,2));
+
+CREATE TABLE claimapc (claimid INTEGER, totalpaymentamt NUMERIC(18,2), paymentamt NUMERIC(18,2), deductibleamt NUMERIC(18,2), coinsuranceamt NUMERIC(18,2));
+
+CREATE TABLE claimattribute (claimid INTEGER, attributeid INTEGER, effdate TIMESTAMP, thevalue VARCHAR(60));
+
+CREATE TABLE claimauthmatch (claimauthmatchid INTEGER, matchtype CHAR(1), matchid INTEGER, referralid INTEGER);
+
+CREATE TABLE ClaimAutoAdjust (HistoryClaimId INTEGER, ClaimId INTEGER, ClaimHistoryType VARCHAR(50), Status VARCHAR(50));
+
+CREATE TABLE ClaimAutoAdjust_Audit (HistoryClaimID INTEGER, ClaimID INTEGER, ClaimHistoryType VARCHAR(50), Status VARCHAR(50), ChangeType INTEGER, Time_Of_Change VARCHAR(50));
+
+CREATE TABLE claimbatch (batchid INTEGER, claimid INTEGER, sequence INTEGER, uniqueid CHAR(50));
+
+CREATE TABLE ClaimCarcDetail (ClaimCarcDetailId INTEGER, ClaimId INTEGER, ClaimLine INTEGER, RuleId INTEGER, CarcCode INTEGER);
+
+CREATE TABLE claimcond (claimid INTEGER, condcode CHAR(2));
+
+CREATE TABLE claimdetail (claimid INTEGER, claimline INTEGER, referralid CHAR(30), revcode VARCHAR(50), planid INTEGER, total NUMERIC(18,2), dosfrom TIMESTAMP, dosto TIMESTAMP, status VARCHAR(50));
+
+CREATE TABLE ClaimDetailAdjustment (ClaimId INTEGER, ClaimLine INTEGER, Payer INTEGER, ClaimAdjustmentGroupCode VARCHAR(50), HipaaAdjReasonCodeId INTEGER, Amount NUMERIC(18,2));
+
+CREATE TABLE claimdetailapc (claimid INTEGER, claimline INTEGER, paymentapc CHAR(5), hcpcsapc CHAR(5), totalpaymentamt NUMERIC(18,2), paymentamt NUMERIC(18,2), deductibleamt NUMERIC(18,2), coinsuranceamt NUMERIC(18,2));
+
+CREATE TABLE claimdetailcdh (claimid INTEGER, claimline INTEGER, hragrouporgpolicyid INTEGER, fsaeligible VARCHAR(50), hsaeligible VARCHAR(50), hraeligible VARCHAR(50));
+
+CREATE TABLE ClaimDetailEAPG (ClaimID INTEGER, ClaimLine INTEGER, FinalEAPG CHAR(5), PricingStatus CHAR(2));
+
+CREATE TABLE payment (paymentid INTEGER, memid INTEGER, programid INTEGER, provid INTEGER, paydiscount NUMERIC(18,2), advanceapplied NUMERIC(18,2), paydate TIMESTAMP, amountpaid NUMERIC(18,2), checkamt NUMERIC(18,2), checknbr CHAR(20), checkprintdate TIMESTAMP, checkprintby INTEGER, lastupdate VARCHAR(50), updateid VARCHAR(50), status VARCHAR(50), payee VARCHAR(100), accountnbr CHAR(30), benefitamt NUMERIC(18,2), negativeamt NUMERIC(18,2), billedamt NUMERIC(18,2), paytype VARCHAR(50), totalpool NUMERIC(18,2), createid VARCHAR(50), createdate TIMESTAMP, reimburseamt NUMERIC(18,2), totalrefundamt NUMERIC(18,2), claimmemid INTEGER, interestenddate TIMESTAMP, qframeprocesslogid INTEGER, qframeprocessdetailid INTEGER, lienpayment VARCHAR(10), capmessagequeueid INTEGER, capmessage TEXT, eligibleorgid INTEGER, ReassociationNbr CHAR(20));
+
+CREATE TABLE capvoucher (paymentid INTEGER, captype VARCHAR(50), caprateid INTEGER, captermid INTEGER, capmonth INTEGER, affiliationid INTEGER, enrollid INTEGER, fundid INTEGER, paytoaffilid INTEGER, capamount NUMERIC(18,2), daycount INTEGER, memcount INTEGER, capdate TIMESTAMP, updateid VARCHAR(50), lastupdate VARCHAR(50), createid VARCHAR(50), createdate TIMESTAMP, refundamt NUMERIC(18,2), networkid INTEGER, recondate TIMESTAMP, method INTEGER, factorvalueid INTEGER, funddetailid INTEGER, capadjustmentid INTEGER, CapFactorId INTEGER);
