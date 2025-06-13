@@ -1,4 +1,5 @@
 using NL2SQL_Blazor.Components;
+using NL2SQL_Blazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,7 @@ builder.Services.AddScoped<NLQueryEngine>(sp => new NLQueryEngine (sp.GetRequire
 builder.Services.AddScoped<DatabaseEngine>(sp => new DatabaseEngine(sp.GetRequiredService<IConfiguration>()));
 builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddScoped<UserService>();
-
+builder.Services.AddScoped<ProductService>();
 
 
 var app = builder.Build();
