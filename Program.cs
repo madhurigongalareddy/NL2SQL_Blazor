@@ -7,11 +7,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpClient();
 
-// Register the NlToSqlService as a scoped service
-builder.Services.AddScoped<NlToSqlService>(sp =>
-    new NlToSqlService(
-        sp.GetRequiredService<HttpClient>(),
-        sp.GetRequiredService<IConfiguration>()));
+// Register the NlQueryEngine as a scoped service
+builder.Services.AddScoped<NLQueryEngine>(sp => new NLQueryEngine (sp.GetRequiredService<HttpClient>(), sp.GetRequiredService<IConfiguration>()));
+builder.Services.AddScoped<DatabaseEngine>(sp => new DatabaseEngine(sp.GetRequiredService<IConfiguration>()));
 builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddScoped<UserService>();
 

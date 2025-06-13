@@ -1,6 +1,7 @@
 ﻿@page "/nl-to-sql"
 @rendermode InteractiveServer
-@inject NlToSqlService NlToSqlService
+@inject NLQueryEngine NLQueryEngine
+@inject DatabaseEngine dbEngine
 @using System.Data
 
 <style>
@@ -36,9 +37,19 @@
 </style>
 
 
-<h3>Natural Language to SQL</h3>
+<h3>NLQuery Engine</h3>
 
 <table cellspacing="1" cellpadding="2">
+    <tr>
+        <td colspan="2">
+            <label>Choose your query language:</label>
+            <input list="languages" @bind="language" style="width: 150px;" />
+            <datalist id="languages">
+                <option value="MSSQL" />
+                <option value="PostgreSQL" />
+            </datalist>
+        </td>
+    </tr>
     <tr>
         <td>
             <textarea @bind="userInput" placeholder="Enter your question..." style="width: 600px; height :75px;"></textarea>
@@ -59,13 +70,13 @@
         Processing...
     </div>
 } 
-@if(!string.IsNullOrEmpty(sqlOutput) && !isLoading)
+@if(!string.IsNullOrEmpty(queryOutput) && !isLoading)
 {
     <table>
         <tr><td><p>SQL Output:</p></td></tr>
         <tr>
             <td>
-                <textarea style="width: 600px; height : 100px;" @bind = "sqlOutput"></textarea>
+                <textarea style="width: 600px; height : 100px;" @bind = "queryOutput"></textarea>
             </td>
             <td>
                 <button class="mt-2 btn btn-primary" @onclick="ExecuteSql" disabled="@isExecuting">
@@ -89,20 +100,20 @@
         }
     </table> 
 
-    @if (sqlResult != null)
+    @if (dtResult != null)
     {
         <div class="result-table-container">
             <table class="result-table">
                 <thead>
                     <tr>
-                        @foreach (DataColumn col in sqlResult.Columns)
+                        @foreach (DataColumn col in dtResult.Columns)
                         {
                             <th>@col.ColumnName</th>
                         }
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (DataRow row in sqlResult.Rows)
+                    @foreach (DataRow row in dtResult.Rows)
                     {
                         <tr>
                             @foreach (var item in row.ItemArray)
@@ -121,28 +132,30 @@
 
     private string userInput;
     private string result;
-    private string sqlOutput;
+    private string queryOutput;
     private string[] commands;
     private string alternativeCmd;
     private bool isLoading = false;
     private bool isExecuting = false;
-    private DataTable sqlResult;
+    private DataTable dtResult;
+
+    private string language { get; set; }
 
     private async Task Convert()
     {
         isLoading = true;
-        sqlOutput = string.Empty;
-        sqlResult = new DataTable();
+        queryOutput = string.Empty;
+        dtResult = new DataTable();
         try
-        {
-            result = await NlToSqlService.ConvertToSqlAsync(userInput);
+        { 
+            result = await NLQueryEngine.ConvertToQueryAsync(userInput, language);
             commands = result.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             if(commands.Length == 0)
             {
-                sqlOutput = "No SQL commands generated.";
+                queryOutput = "No query generated.";
                 return;
             }
-            sqlOutput = commands[0].Trim(); // Take only the first SQL statement
+            queryOutput = commands[0].Trim(); // Take only the first SQL statement
             if(commands.Length > 1)
                 alternativeCmd = string.Join("; ", commands.Skip(1)).Trim(); // Join remaining commands as alternatives
         }
@@ -157,7 +170,8 @@
         isExecuting = true;
         try
         {
-            sqlResult = await NlToSqlService.ExecuteSqlAsync(sqlOutput);
+            dbEngine.language = Enum.TryParse<DatabaseEngine.QueryLanguage>(language, out var lang) ? lang : DatabaseEngine.QueryLanguage.MSSQL;
+            dtResult = await dbEngine.ExecuteQueryAsync(queryOutput);
         }
         finally
         {
