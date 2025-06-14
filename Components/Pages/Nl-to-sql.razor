@@ -188,7 +188,7 @@
         dtResult = new DataTable();
         try
         { 
-            result = await NLQueryEngine.ConvertToQueryAsync(userInput, product);
+            result = await NLQueryEngine.ConvertToQueryAsync(userInput, products.FirstOrDefault());
             commands = result.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             if(commands.Length == 0)
             {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Net.Http.Headers;
+using NL2SQL_Blazor.Components.Models;
 
-   
 public class NLQueryEngine
 {
     private readonly HttpClient _httpClient;
@@ -15,7 +15,7 @@ public class NLQueryEngine
         _apiUrl = configuration["Ollama:NlToQueryApiUrl"] ?? throw new ArgumentNullException(nameof(configuration), "API URL 'NlToQueryApiUrl' is null.");
     }
 
-    public async Task<string> ConvertToQueryAsync(string naturalLanguage, string queryLanguage)
+    public async Task<string> ConvertToQueryAsync(string naturalLanguage, Product product)
     {
         try
         {
@@ -25,14 +25,14 @@ public class NLQueryEngine
             }
 
             // read the db table structure from schema file 
-            var sqlSchema = await File.ReadAllTextAsync(Path.Combine("Schemas", $"{queryLanguage}_Schema.txt"));
+            var sqlSchema = await File.ReadAllTextAsync(Path.Combine("Schemas", $"{product.ProductName}_Schema.txt"));
 
             var request = new
             {
                 model = "llama3.2",
                 messages = new[]
                 {
-                    new { role = "system", content = string.Format($"As a professional {queryLanguage} developer, only {queryLanguage} queries should be in response " +
+                    new { role = "system", content = string.Format($"As a professional {product.DBServerName} developer, only {product.DBServerName} queries should be in response " +
                     $"without extra things or descriptions because this will be input for Database Server. Assume I have a database with this structure:{sqlSchema}") },
                     new { role = "user", content = naturalLanguage.ToString() }
                 },
