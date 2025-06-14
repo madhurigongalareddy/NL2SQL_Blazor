@@ -5,24 +5,24 @@ using System.Data;
 
 public class DatabaseEngine
 {
-    private string _sqlConnString = "";
-    private string _postgreSqlConnString = "";
+    private string _claimsConnString = "";
+    private string _referenceConnString = "";
 
     public DatabaseEngine(IConfiguration configuration)
     {
-        _sqlConnString = configuration.GetConnectionString($"{QueryLanguage.MSSQL}_ConnString")
-                           ?? throw new ArgumentNullException(nameof(configuration), $"Connection string {QueryLanguage.MSSQL}_ConnString is null.");
+        _claimsConnString = configuration.GetConnectionString($"{Product.Claims}_ConnString")
+                           ?? throw new ArgumentNullException(nameof(configuration), $"Connection string {Product.Claims}_ConnString is null.");
 
-        _postgreSqlConnString = configuration.GetConnectionString($"{QueryLanguage.PostgreSQL}_ConnString")
-                           ?? throw new ArgumentNullException(nameof(configuration), $"Connection string {QueryLanguage.PostgreSQL}_ConnString is null.");
+        _referenceConnString = configuration.GetConnectionString($"{Product.Reference}_ConnString")
+                           ?? throw new ArgumentNullException(nameof(configuration), $"Connection string {Product.Reference}_ConnString is null.");
     }
 
-    public QueryLanguage language { get; set; }
+    public Product product { get; set; }
 
-    public enum QueryLanguage
+    public enum Product
     {
-        MSSQL,
-        PostgreSQL
+        Claims,
+        Reference
     }
 
     public async Task<DataTable> ExecuteQueryAsync(string sqlQuery)
@@ -33,7 +33,7 @@ public class DatabaseEngine
             {
                 return new DataTable();
             }           
-            using IDbConnection connection = language == QueryLanguage.MSSQL ? new SqlConnection(_sqlConnString) : new NpgsqlConnection(_postgreSqlConnString);
+            using IDbConnection connection = product == Product.Claims ? new SqlConnection(_claimsConnString) : new NpgsqlConnection(_referenceConnString);
             using IDbCommand command = connection.CreateCommand();
             command.CommandText = sqlQuery;
 
