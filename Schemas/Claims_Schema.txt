@@ -98,7 +98,7 @@ CREATE TABLE capvoucher(
 	recondate ASC,
 	factorvalueid ASC,
 	capadjustmentid ASC
-)) 
+));
 
 
 
