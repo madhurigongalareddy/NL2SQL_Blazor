@@ -100,13 +100,7 @@ CREATE TABLE provider(
     handicapaccess dbo.yesnotype NOT NULL,
     sex char(1) NOT NULL,
     dob datetime NULL,
-    overrideroleid dbo.ident NOT NULL,
-    lienmailtomember dbo.yesnotype NOT NULL,
-    rentalnetwork dbo.yesnotype NOT NULL,
-    autocreated dbo.yesnotype NOT NULL,
-    autoupdated dbo.yesnotype NOT NULL,
     npi char(10) NULL,
-    externalediting dbo.yesnotype NOT NULL,
     Ssn dbo.ident NULL,
     ExternalId varchar(15) NULL,
     NPIType char(1) NOT NULL,
@@ -169,6 +163,19 @@ CREATE TABLE provspecialty(
 	effdate ASC
 ));
 
+CREATE TABLE dbo.StateCertification(
+	StateCertificationid dbo.ident NOT NULL,
+	certificationtype dbo.shortdesctype NOT NULL,
+	certifyingagency dbo.shortdesctype NOT NULL,
+	createid dbo.udtuserid NOT NULL,
+	createdate dbo.createdatetype NOT NULL,
+	updateid dbo.udtuserid NOT NULL,
+	lastupdate dbo.lastupdatetype NOT NULL,
+ CONSTRAINT PKstateCertification PRIMARY KEY CLUSTERED 
+(
+	StateCertificationid ASC
+));
+
 CREATE TABLE ProviderStateCertification(
 	providerid dbo.ident NOT NULL,
 	certificateId dbo.ident NOT NULL,
@@ -186,6 +193,20 @@ CREATE TABLE ProviderStateCertification(
 	providerid ASC,
 	certificateId ASC,
 	effdate ASC
+));
+
+CREATE TABLE dbo.board(
+	boardid dbo.ident NOT NULL,
+	entityid dbo.ident NOT NULL,
+	specialtycode dbo.ident NOT NULL,
+	createid dbo.udtuserid NOT NULL,
+	createdate dbo.createdatetype NOT NULL,
+	lastupdate dbo.lastupdatetype NOT NULL,
+	updateid dbo.udtuserid NOT NULL,
+	fullname dbo.longname NOT NULL,
+ CONSTRAINT PKboard PRIMARY KEY CLUSTERED 
+(
+	boardid ASC
 ));
 
 CREATE TABLE certification(
@@ -219,7 +240,6 @@ CREATE TABLE contract(
 	capid dbo.ident NOT NULL,
 	facilitycode char(1) NOT NULL,
 	description dbo.shortdesctype NOT NULL,
-	longdescription dbo.longdesctype NULL,
 	status dbo.statustype NOT NULL,
 	effdate smalldatetime NOT NULL,
 	termdate smalldatetime NOT NULL,
@@ -227,9 +247,6 @@ CREATE TABLE contract(
 	paytermid dbo.ident NOT NULL,
 	lastupdate dbo.lastupdatetype NOT NULL,
 	updateid dbo.udtuserid NOT NULL,
-	tierbased dbo.zint NOT NULL,
-	haspool dbo.zint NOT NULL,
-	ucrtableid dbo.ident NOT NULL,
 	contracted dbo.zint NOT NULL,
 	inpcostchgratio dbo.zmoney NOT NULL,
 	ffsriskpool dbo.ident NOT NULL,
@@ -240,14 +257,6 @@ CREATE TABLE contract(
 	ffsriskcredit dbo.zmoney NOT NULL,
 	ismodel dbo.yesnotype NOT NULL,
 	modelid dbo.ident NOT NULL,
-	ndcfeeid dbo.ident NOT NULL,
-	submitwindow dbo.zint NOT NULL,
-	stoploss dbo.zmoney NOT NULL,
-	submitdiscountid dbo.ident NOT NULL,
-	isapc dbo.yesnotype NOT NULL,
-	moddiscountgroupid dbo.ident NOT NULL,
-	tierassignment dbo.ident NOT NULL,
-	maxreimbursement dbo.zmoney NOT NULL,
 	restrictiongroupid dbo.ident NOT NULL,
 	isbasesupplemental dbo.yesnotype NOT NULL,
 	applydifferential dbo.yesnotype NOT NULL,
@@ -260,12 +269,6 @@ CREATE TABLE contract(
 	usendcnotcpt dbo.yesnotype NOT NULL,
 	contractcategory dbo.ident NULL,
 	contracttype dbo.typecode NOT NULL,
-	OPPSType dbo.typecode NOT NULL,
-	IsNxPbaEnabled dbo.yesnotype NOT NULL,
-	MPPRLimitPercentage dbo.zmoney NOT NULL,
-	EAPGScheduleId dbo.ident NOT NULL,
-	EAPGCrossoverSchId dbo.ident NOT NULL,
-	CrossOverInpCostChgRatio dbo.zmoney NOT NULL,
 	AlternateId dbo.ident NULL,
  CONSTRAINT PKcontract PRIMARY KEY CLUSTERED 
 (
