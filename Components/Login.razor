@@ -6,25 +6,38 @@
 @rendermode InteractiveServer
 
 <style>
-    .login-bg {
+    .divbackground
+    {
+        background-image: url('/bg.jpg');
+        background-size: cover;
+        background-position: center;
         min-height: 100vh;
-        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
         display: flex;
         align-items: center;
         justify-content: center;
+        
     }
+    
+  /*   .login-bg {
+        min-height: 100vh;     
+        background-image: url("Bg.jpg");
+       /*  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        background-color: #34eba1 ; display: flex; 
+        align-items: center;
+        justify-content: center;
+    } */
     .login-card {
-        min-width: 350px;
-        max-width: 400px;
+        min-width: 400px;
+        max-width: 450px;
         box-shadow: 0 4px 24px rgba(0,0,0,0.15);
         border-radius: 1rem;
-        padding: 2rem 2rem 1.5rem 2rem;
+        padding: 2rem 2rem 1.5rem 2rem;      
         background: #fff;
     }
     .login-title {
-        font-weight: 700;
+        font-weight: 900;
         color: #2575fc;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         text-align: center;
     }
     .login-btn {
@@ -34,10 +47,12 @@
     .sso-btn {
         width: 100%;
         font-weight: 600;
+        font-weight:bold;
         margin-top: 0.5rem;
-        background: #fff;
-        color: #2575fc;
+        background: #2575fc;
+        color: #ffffff;
         border: 2px solid #2575fc;
+        margin-bottom: 2rem;
     }
     .sso-btn:hover {
         background: #2575fc;
@@ -45,19 +60,17 @@
     }
 </style>
 
-<div class="login-bg">
+<div  class="divbackground">
+   @*  class="login-bg" *@
     <div class="login-card">
         <div class="login-title">Sign In</div>
-
         @if (!string.IsNullOrEmpty(ErrorMessage))
         {
             <div class="alert alert-danger text-center">@ErrorMessage</div>
         }
-
         <EditForm Model="loginModel" OnValidSubmit="HandleLogin" FormName="loginForm">
             <DataAnnotationsValidator />
             <ValidationSummary />
-
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <InputText id="username" class="form-control" @bind-Value="loginModel.Username" autocomplete="username" />
@@ -68,13 +81,14 @@
             </div>
             <button type="submit" class="btn btn-primary login-btn">Login</button>
         </EditForm>
-        <div class="text-center my-2" style="font-weight: 500; color: #888; font-size: 0.95rem;">Or sign in with</div>
+        <div class="text-center my-2" style="font-weight: 500; color: #2575fc; font-size: 0.95rem;">Or sign in with</div>
         <EditForm Model="loginModel" OnValidSubmit="HandleSsoLogin" FormName="ssoForm">
             <button class="btn sso-btn" type="submit" disabled>
                 Login with SSO
             </button>
         </EditForm>
     </div>
+    <div></div>
 </div>
 
 @code {

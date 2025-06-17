@@ -7,9 +7,9 @@
 @using NL2SQL_Blazor.Components.Models
 
 <style>
-    .result-table-container {
-    height: 500px;
-    width: 1000px;
+      .result-table-container {
+    height: 350px;
+    width: 950px;
     overflow: auto;
     border: 1px solid #1976d2;
     background: #f5f7fa;
@@ -19,7 +19,7 @@
     .result-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 980px;
+    min-width: 900px;
     }
     .result-table th, .result-table td {
     border: 1px solid #1976d2;
@@ -36,37 +36,120 @@
     .result-table tr:nth-child(odd) {
     background-color: #fff;
     }
+
+    .tableclass{
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        margin: 2px;
+    }
+    .tablebody
+    {
+        vertical-align: top;           
+        width:100%;
+        font-family:Arial;
+        font-size:15px;
+
+    }
+    .tdwidth{
+     width:65%
+    }
+    .tdleft
+    {
+        width:70%;
+        vertical-align:top;       
+    }
+    .tdright {
+        width: 30%;
+        vertical-align: top;
+    }
+    .textareainput{
+        width:800px ;
+        height :75px;
+    }
+    .textarearesult
+    {
+      width:800px; 
+      height : 100px;
+      scroll-behavior:auto;
+    }
+    .inputddl{
+      width:200px;
+      margin:2px;
+    }
+    .lblhead
+    {
+        font-family:Arial;
+        font-size: 30px;
+        font-weight: bold;
+      
+    }
+    .td1{
+        width:18%;
+        text-align: left;
+    }
+
+    .td2 {
+        width: 45%;
+        text-align: left;
+    }
+
+    .td3 {
+        width: 17%;
+        text-align: left;
+    }
+    .tdtext{
+        width: 60%; 
+        padding-right: 5px;
+    }
+    .heading
+    {
+        font-family: Arial;
+        font-size: 20px;
+        font-weight: bold;
+        color: #1976d2;
+    }
+    .subhead{
+        font-family: Arial;
+        font-size: 15px;
+        font-weight: bold;
+        color: #1976d2;
+    }
+
 </style>
 
-
-<h3>NLQuery Engine</h3>
-
-<table cellspacing="1" cellpadding="2">
+<table cellspacing="1" cellpadding="2" class="tablebody">
     <tr>
-        <td>
-            <table>
+        <td colspan="2" class="heading">NLQuery Engine</td>
+    </tr>
+  <tr>
+  <td class="tdleft">
+<table cellpadding="1" cellspacing="2">
                 <tr>
                     <td colspan="2">
-                        <label>Choose your product:</label>
-                        <input list="products" @bind="product" style="width: 150px;" />
-                        <datalist id="products">
-                            @foreach (var product in products)
-                            {
-                                <option value="@product.ProductName">@product.ProductName</option>
-                            }
-                        </datalist>
-                        <label>DBServer: {}</label>
-                        
-                    </td>                   
-                </tr>
-                <tr>
-                    <td>
-                        <textarea @bind="userInput" placeholder="Enter your question..." style="width: 600px; height :75px;"></textarea>
+                        <table cellpadding="1" cellspacing="1">
+                            <tr>
+                                <td align="left">Choose your product:</td>
+                                <td align="left">
+                                    <input class="inputddl" list="products" @bind="product" />
+                                    <datalist id="products">
+                                        @foreach (var product in products)
+                                        {
+                                            <option value="@product.ProductName">@product.ProductName</option>
+                                        }
+                                    </datalist>
+                                </td>
+                                <td align="left"><label>DBServer: {}</label></td>
+                            </tr>
+                        </table>
                     </td>
-                    <td>
-                        <button class="mt-2 btn btn-primary" @onclick="Convert" disabled="@isLoading">
-                            <span>Convert</span>
-                        </button>
+                    </tr>
+                    
+                <tr>
+                    <td class="tdtext"> <textarea class="textareainput" @bind="userInput" placeholder="Enter your question..."></textarea></td>
+                    <td valign="top" align="right">
+                        <button class="mt-2 btn btn-primary" @onclick="Convert" disabled="@isLoading">Convert</button>
                         @if (isLoading)
                         {
                             <div class="mt-2 text-primary">
@@ -76,92 +159,122 @@
                         }
                     </td>
                 </tr>
-            </table>            
-        </td>
-        <td rowspan="2">
+                @if (!string.IsNullOrEmpty(queryOutput) && !isLoading)
+                {
+                    <tr>
+                        <td colspan="2" valign="top">
+                            <table class="tablebody">
+                                <tr><td colspan="2">SQL Output:</td></tr>
+                                <tr>
+                                    <td>
+                                        <textarea class="textarearesult" @bind="queryOutput"></textarea>
+                                    </td>
+                                    <td align="right" valign="top">
+                                        <button class="mt-2 btn btn-primary" @onclick="ExecuteSql" disabled="@isExecuting">
+                                            @if (isExecuting)
+                                            {
+                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Executing...</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Execute SQL</span>
+                                            }
+                                        </button>
+                                    </td>
+                                </tr>
+                                @if (!string.IsNullOrEmpty(alternativeCmd))
+                                {
+                                    <tr>
+                                        <td colspan="2"><p>Alternative Commands:</p><label>@alternativeCmd</label></td>
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+                    </tr>
+                }   
+                
+                <tr>
+                    <td colspan="2" class="tdleft">
+
+                @if (!string.IsNullOrEmpty(queryOutput) && !isLoading)
+                {
+                    @if (dtResult != null)
+                    {
+                        <div class="result-table-container">
+                            <table class="result-table">
+                                <thead>
+                                    <tr>
+                                        @foreach (DataColumn col in dtResult.Columns)
+                                        {
+                                            <th>@col.ColumnName</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (DataRow row in dtResult.Rows)
+                                    {
+                                        <tr>
+                                            @foreach (var item in row.ItemArray)
+                                            {
+                                                <td>@item</td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                }
+
+
+                    </td>
+                </tr>
+            </table>
+      </td>
+        <td class="tdright">
             <table>
                 <tr>
-                    <td style="width: 400px;">
-                        <h4>Frequently searched prompts</h4>
-                        <div style="height: 400px; overflow-y: auto; font-size: 13px; line-height: 1.2;">
-                            @foreach (var prompt in prompts)
-                            {
-                                <p style="margin: 4px 0;">@prompt</p>
-                            }
+                    <td>
+                        <div>
+                            <ul class="nav nav-tabs" id="promptTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link subhead @(activeTab == 0 ? "active" : "")" id="frequent-tab" type="button" role="tab" @onclick="() => SetTab(0)">System Prompts</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link subhead @(activeTab == 1 ? "active" : "")" id="custom-tab" type="button" role="tab" @onclick="() => SetTab(1)">History</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="promptTabsContent" style="border:1px solid #ccc; border-top:0; padding:10px; background:#fff;">
+                                @if (activeTab == 0)
+                                {
+                                    <div class="tab-pane fade show active" id="frequent" role="tabpanel">
+                                        <div style="height: 400px; overflow-y: auto; font-size: 13px; line-height: 2;">
+                                            @foreach (var prompt in prompts)
+                                            {
+                                                <a href="/nl-to-sql">@prompt</a>
+
+                                                <br />
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                else if (activeTab == 1)
+                                {
+                                    <div class="tab-pane fade show active" id="custom" role="tabpanel">
+                                        <div style="height: 400px; overflow-y: auto; font-size: 13px; line-height: 1.2;">
+                                            <p>No history yet.</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
                         </div>
                     </td>
                 </tr>
             </table>
         </td>
-    </tr>
-    @if (!string.IsNullOrEmpty(queryOutput) && !isLoading)
-    {
-        <tr>
-            <td>
-            <table>
-                <tr><td><p>SQL Output:</p></td></tr>
-                <tr>
-                    <td>
-                        <textarea style="width: 600px; height : 100px;" @bind="queryOutput"></textarea>
-                    </td>
-                    <td>
-                        <button class="mt-2 btn btn-primary" @onclick="ExecuteSql" disabled="@isExecuting">
-                            @if (isExecuting)
-                            {
-                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                <span class="visually-hidden">Executing...</span>
-                            }
-                            else
-                            {
-                                <span>Execute SQL</span>
-                            }
-                        </button>
-                    </td>
-                </tr>
-                @if (!string.IsNullOrEmpty(alternativeCmd))
-                {
-                    <tr>
-                        <td colspan="2"><p>Alternative Commands:</p><label>@alternativeCmd</label></td>
-                    </tr>
-                }
-            </table>
-            </td>
-        </tr>
-    }
-</table>
-
-
- 
-@if(!string.IsNullOrEmpty(queryOutput) && !isLoading)
-{
-    @if (dtResult != null)
-    {
-        <div class="result-table-container">
-            <table class="result-table">
-                <thead>
-                    <tr>
-                        @foreach (DataColumn col in dtResult.Columns)
-                        {
-                            <th>@col.ColumnName</th>
-                        }
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (DataRow row in dtResult.Rows)
-                    {
-                        <tr>
-                            @foreach (var item in row.ItemArray)
-                            {
-                                <td>@item</td>
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-}
-
+  </tr>
+ </table>
 @code {
 
     private string userInput;
@@ -172,6 +285,8 @@
     private bool isLoading = false;
     private bool isExecuting = false;
     private DataTable dtResult;
+
+    private int activeTab = 0;
 
     private string product { get; set; }
     private string dbserver { get; set; }
@@ -231,4 +346,9 @@
         "Fetch top 5 claims with status 'REVIEW'",
         "Fetch top 5 claims with status 'REVIEW' and 'PEND'"
     };
+    private void SetTab(int tabIndex)
+    {
+        activeTab = tabIndex;
+    }
+
 }

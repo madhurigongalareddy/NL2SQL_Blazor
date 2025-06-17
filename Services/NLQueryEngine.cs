@@ -25,15 +25,14 @@ public class NLQueryEngine
             }
 
             // read the db table structure from schema file 
-            var sqlSchema = await File.ReadAllTextAsync(Path.Combine("Schemas", $"{product.ProductName}_Schema.txt"));
+            var systemprompt = GetSystemPrompt(product.DBServerName, product.ProductName);
 
             var request = new
             {
                 model = "llama3.2",
                 messages = new[]
                 {
-                    new { role = "system", content = string.Format($"As a professional {product.DBServerName} developer, only {product.DBServerName} queries should be in response " +
-                    $"without extra things or descriptions because this will be input for Database Server. Assume I have a database with this structure:{sqlSchema}") },
+                    new { role = "system", content = systemprompt },
                     new { role = "user", content = naturalLanguage.ToString() }
                 },
                 stream = false,
@@ -84,7 +83,16 @@ public class NLQueryEngine
         // Join commands with a newline for readability
         return string.Join("\n", commands);
     }
+    private string GetSystemPrompt(string dbServerName, string productname)
+    {
+        if (string.IsNullOrWhiteSpace(dbServerName) || string.IsNullOrWhiteSpace(productname))
+        {
+            throw new ArgumentException("dbServerName and sqlSchema cannot be null or empty.");
+        }
+        var sqlSchema = File.ReadAllTextAsync(Path.Combine("Schemas", $"{productname}_Schema.txt"));
 
+        return $"You are a highly skilled SQL Server expert with deep knowledge of US health insurance claims data for payer organizations. You write clean, optimized T-SQL queries using the provided database schema. \n  Your goal is to convert natural language requests into accurate, fully-formed SQL Server queries that run against a health claims database. Always select the most efficient approach. \n ### General Rules:\n - Use ANSI SQL where possible.\n - Use SQL Server-specific functions only when needed (e.g., GETDATE(), DATEDIFF()).\n - Always join tables correctly using primary/foreign keys. \n - Always include WHERE clauses based on user filters.\n - Use explicit column names (never SELECT *).\n - Apply aggregation functions (SUM, COUNT, AVG, etc.) when requested.\n - Format dates in 'YYYY-MM-DD' format.\n - Avoid using reserved keywords as aliases.\n - Use OFFSET ... FETCH for top-N queries (if needed).\n - Always alias tables for clarity (e.g., ch for Claims_Header).\n - NEVER use SUBSTR, SUBSTRING, LEFT, RIGHT,STRFTIME, or any string manipulation functions to extract date parts.\n - All date fields are stored as DATE or DATETIME. You can directly compare date fields without conversions.\n - Always filter dates before aggregation whenever possible to improve query performance.\n ### Database Schema:\n **{sqlSchema.Result}\n ### Output Format:\n Only output valid T-SQL code. Do not explain the query. Do not add comments. Do not include any markdown formatting.";
+    }
     private class OpenAiResponse
     {
         public message Message { get; set; }
