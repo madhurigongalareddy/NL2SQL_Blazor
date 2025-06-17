@@ -1,4 +1,5 @@
 using NL2SQL_Blazor.Components.Models;
+using static DatabaseEngine;
 
 public class ProductService
 {
@@ -14,9 +15,14 @@ public class ProductService
         return Task.FromResult(_products);
     }
 
-    public Task<Product?> GetProductByIdAsync(int id) // Updated return type to Task<Product?>
+    public Task<IEnumerable<Product?>> GetProductByIdAsync(int id)
     {
-        var product = _products.FirstOrDefault(p => p.Id == id);
+        var product = _products.Where(p => p.Id == id);
+        return Task.FromResult(product);
+    }
+    public Task<IEnumerable<Product?>> GetProductsByUserIdAsync(int id)
+    {
+        var product = _products.Where(p => p.Id == id);
         return Task.FromResult(product);
     }
 

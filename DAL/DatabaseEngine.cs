@@ -10,16 +10,16 @@ public class DatabaseEngine
 
     public DatabaseEngine(IConfiguration configuration)
     {
-        _claimsConnString = configuration.GetConnectionString($"{Product.Claims}_ConnString")
-                           ?? throw new ArgumentNullException(nameof(configuration), $"Connection string {Product.Claims}_ConnString is null.");
+        _claimsConnString = configuration.GetConnectionString($"{DatabaseProduct.Claims}_ConnString")
+                           ?? throw new ArgumentNullException(nameof(configuration), $"Connection string {DatabaseProduct.Claims}_ConnString is null.");
 
-        _referenceConnString = configuration.GetConnectionString($"{Product.Reference}_ConnString")
-                           ?? throw new ArgumentNullException(nameof(configuration), $"Connection string {Product.Reference}_ConnString is null.");
+        _referenceConnString = configuration.GetConnectionString($"{DatabaseProduct.Reference}_ConnString")
+                           ?? throw new ArgumentNullException(nameof(configuration), $"Connection string {DatabaseProduct.Reference}_ConnString is null.");
     }
 
-    public Product product { get; set; }
+    public DatabaseProduct product { get; set; }
 
-    public enum Product
+    public enum DatabaseProduct
     {
         Claims,
         Reference
@@ -33,7 +33,7 @@ public class DatabaseEngine
             {
                 return new DataTable();
             }           
-            using IDbConnection connection = product == Product.Claims ? new SqlConnection(_claimsConnString) : new NpgsqlConnection(_referenceConnString);
+            using IDbConnection connection = product == DatabaseProduct.Claims ? new SqlConnection(_claimsConnString) : new NpgsqlConnection(_referenceConnString);
             using IDbCommand command = connection.CreateCommand();
             command.CommandText = sqlQuery;
 

@@ -1,4 +1,54 @@
 ﻿@inherits LayoutComponentBase
+<style>
+    .tagline-bar {
+        background: #20232a; 
+        padding: 12px 0;
+        border-radius: 0 0 8px 8px;
+        text-align: center;
+    }
+
+    .navbar-brand {
+        font-family: 'Segoe UI', 'Arial', sans-serif;
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        color: #ff9800;
+        background: linear-gradient(90deg, #2575fc 0%, #ff9800 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+        text-shadow: 1px 2px 8px rgba(37,117,252,0.10);
+        margin-top: 10px;
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+
+    .team-footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background: rgb(52,12,76);
+        color: #ff9800;
+        font-family: 'Segoe UI', 'Arial', sans-serif;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        padding: 10px 0 8px 0;
+        z-index: 100;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+        border-radius: 8px 8px 0 0;
+    }
+
+    .team-name {
+        color: white;
+        font-weight: 800;
+        margin-left: 4px;
+    }
+
+</style>
 
 <div class="page">
     <div class="sidebar">
@@ -7,12 +57,15 @@
 
     <main>
         <div class="top-row px-4">
-            @* <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a> *@
+            <a class="navbar-brand" href="">You ask, we write. Let your data speak!</a>
         </div>
 
         <article class="content px-4">
             @Body
         </article>
+        <footer class="team-footer">
+            Authored by <span class="team-name">Claim Crafters</span>
+        </footer>
     </main>
 </div>
 
