@@ -252,7 +252,7 @@
                                         <div style="height: 400px; overflow-y: auto; font-size: 13px; line-height: 2;">
                                             @foreach (var prompt in prompts)
                                             {
-                                                <a href="/nl-to-sql">@prompt</a>
+                                                <a href="/nl-to-sql" @onclick="() => SetPrompt(prompt)" style="cursor:pointer;">@prompt</a>
 
                                                 <br />
                                             }
@@ -335,20 +335,26 @@
 
     private List<string> prompts = new List<string>()
     {
-        "Fetch top 10 claims", 
-        "Fetch top 5 EAPG details", 
-        "Fetch top 10 837 claims",
-        "Fetch top 5 claims with status 'APPROVED'",
-        "Fetch top 5 claims with status 'DENY'",
-        "Fetch top 5 claims with status 'PAID'",
-        "Fetch top 5 claims with status 'PEND'",
-        "Fetch top 5 claims with status 'REJECT'",
-        "Fetch top 5 claims with status 'REVIEW'",
-        "Fetch top 5 claims with status 'REVIEW' and 'PEND'"
+        "Show me the total number of claims received in May 2025.",
+        "How much was paid for claims between January and March 2025?",
+        "What is the denial rate for claims submitted this year?",
+        "List top 5 providers by total paid amount this year.",
+        "Show me members whose claims exceed $5,000 in 2025.",
+        "Give me claims pending for more than 60 days.",
+        "Show all claims for member <member name> in 2025",
+        "Show top 10 denial reasons and count for Q1 2025.",
+        "Show me the top 10 providers with the highest number of capitation claims in the last 6 months",
+        // "Show members assigned to capitated providers but with no encounters submitted in the last 6 months."
+        //Identify discrepancies between capitation payments and submitted claims for the same members.
+
     };
     private void SetTab(int tabIndex)
     {
         activeTab = tabIndex;
+    }
+    private void SetPrompt(string prompt)
+    {
+        userInput = prompt;
     }
 
 }
