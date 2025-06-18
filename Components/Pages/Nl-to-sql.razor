@@ -5,6 +5,7 @@
 @inject ProductService ProductService
 @inject UserService UserService
 @inject AuthenticationService AuthService
+@inject IJSRuntime JS
 @using System.Data
 @using NL2SQL_Blazor.Components.Models
 
@@ -126,7 +127,7 @@
 
 
 </style>
-
+<script src="downloadFile.js"></script>
 <table cellspacing="1" cellpadding="2" class="tablebody">
     <tr>
         <td colspan="2" class="heading">NLQuery Engine</td>
@@ -195,6 +196,7 @@
                                                 <span>Execute SQL</span>
                                             }
                                         </button>
+                                        <button class="mt-2 btn btn-primary" @onclick="ExportGridToText" style="float:right;">Export</button>
                                     </td>
                                 </tr>
                                 @if (!string.IsNullOrEmpty(alternativeCmd))
@@ -237,6 +239,7 @@
                                             }
                                         </tbody>
                                     </table>
+                                 
                                 </div>
                             }
                         }
@@ -419,6 +422,44 @@
 
         return false;
     }
+
+    private async Task ExportGridToText()
+    {
+        if (dtResult == null || dtResult.Columns.Count == 0)
+            return;
+
+        var sb = new System.Text.StringBuilder();
+
+        // Header
+        for (int i = 0; i < dtResult.Columns.Count; i++)
+        {
+            sb.Append(dtResult.Columns[i].ColumnName);
+            if (i < dtResult.Columns.Count - 1)
+                sb.Append(',');
+        }
+        sb.AppendLine();
+
+        // Rows
+        foreach (DataRow row in dtResult.Rows)
+        {
+            for (int i = 0; i < dtResult.Columns.Count; i++)
+            {
+                var value = row[i]?.ToString()?.Replace("\t", " ") ?? "";
+                sb.Append(value);
+                if (i < dtResult.Columns.Count - 1)
+                    sb.Append(',');
+            }
+            sb.AppendLine();
+        }
+
+        var fileName = $"QueryResult_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+        var fileContent = sb.ToString();
+        var bytes = System.Text.Encoding.UTF8.GetBytes(fileContent);
+        var base64 = System.Convert.ToBase64String(bytes);
+
+        await JS.InvokeVoidAsync("downloadFileFromBase64", fileName, base64);
+    }
+
 
     private List<string> prompts = new List<string>()
     {

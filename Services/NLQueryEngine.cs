@@ -113,7 +113,7 @@ public class NLQueryEngine
            $"Use explicit column names (never SELECT *).\n - Apply aggregation functions (SUM, COUNT, AVG, etc.) when requested.\n - Format dates in 'YYYY-MM-DD' format.\n - " +
            $"Avoid using reserved keywords as aliases.\n - Use OFFSET ... FETCH for top-N queries (if needed).\n - Always alias tables for clarity (e.g., ch for Claims_Header)." +
            $"\n - NEVER use SUBSTR, SUBSTRING, LEFT, RIGHT,STRFTIME, or any string manipulation functions to extract date parts.\n - All date fields are stored as DATE or DATETIME." +
-           $" You can directly compare date fields without conversions.\n - Always filter dates before aggregation whenever possible to improve query performance.\n " +
+           $" You can directly compare date fields without conversions.\n - Always filter dates before aggregation whenever possible to improve query performance.\n Do not guess columns or tables if not in the provided schema. \n" +
            $"### Database Schema:\n **{sqlSchema.Result}\n ### Output Format:\n Only output valid T-SQL code. Do not explain the query. Do not add comments. Do not include any" +
            $" markdown formatting. Be aware the sql injection check mentioned in method Nl-to_sql.HasSqlInjectionPattern";
         } 

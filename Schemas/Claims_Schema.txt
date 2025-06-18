@@ -1,104 +1,54 @@
-CREATE TABLE dbo.claim (claimid INT , referralid VARCHAR(30), enrollid INT , startdate DATETIME , enddate DATETIME , totalamt DECIMAL(18,2) , status VARCHAR(20) , planid INT , paiddate DATETIME );
-CREATE TABLE claim837 (claimid int, billingprovname varchar(50), billingprovidentifier char(80));
-CREATE TABLE Claim837Adjustment (ClaimId int, FrequencyCode char(1), ReqType varchar(10), Status varchar(50));
-CREATE TABLE ClaimAdjustment (ClaimId int, Payer int, ClaimAdjustmentGroupCode varchar(50), HipaaAdjReasonCodeId int, Amount decimal(18,2));
-CREATE TABLE claimapc (claimid int, totalpaymentamt decimal(18,2), paymentamt decimal(18,2), deductibleamt decimal(18,2), coinsuranceamt decimal(18,2));
-CREATE TABLE claimattribute (claimid int, attributeid int, effdate smalldatetime, thevalue varchar(60));
-CREATE TABLE claimauthmatch (claimauthmatchid int, matchtype char(1), matchid int, referralid int);
-CREATE TABLE ClaimAutoAdjust (HistoryClaimId int, ClaimId int, ClaimHistoryType varchar(50), Status varchar(50));
-CREATE TABLE ClaimAutoAdjust_Audit (HistoryClaimID int, ClaimID int, ClaimHistoryType varchar(50), Status varchar(50), ChangeType int, Time_Of_Change varchar(50));
-CREATE TABLE claimbatch (batchid int, claimid int, sequence int, uniqueid char(50));
-CREATE TABLE ClaimCarcDetail (ClaimCarcDetailId int, ClaimId int, ClaimLine int, RuleId int, CarcCode int);
-CREATE TABLE claimcond (claimid int, condcode char(2));
-CREATE TABLE claimdetail (claimid int, claimline int, referralid char(30), revcode varchar(50), planid int, total decimal(18,2), dosfrom smalldatetime, dosto smalldatetime, status varchar(50));
-CREATE TABLE ClaimDetailAdjustment (ClaimId int, ClaimLine int, Payer int, ClaimAdjustmentGroupCode varchar(50), HipaaAdjReasonCodeId int, Amount decimal(18,2));
-CREATE TABLE claimdetailapc (claimid int, claimline int, paymentapc char(5), hcpcsapc char(5), totalpaymentamt decimal(18,2), paymentamt decimal(18,2), deductibleamt decimal(18,2), coinsuranceamt decimal(18,2));
-CREATE TABLE claimdetailcdh (claimid int, claimline int, hragrouporgpolicyid int, fsaeligible varchar(50), hsaeligible varchar(50), hraeligible varchar(50));
-CREATE TABLE ClaimDetailEAPG (ClaimID int, ClaimLine int, FinalEAPG char(5), PricingStatus char(2));
 
-
-CREATE TABLE payment(
-	paymentid dbo.ident NOT NULL,
-	memid dbo.ident NOT NULL,
-	programid dbo.ident NOT NULL,
-	provid dbo.ident NOT NULL,
-	paydiscount dbo.zmoney NOT NULL,
-	advanceapplied dbo.zmoney NOT NULL,
-	paydate smalldatetime NULL,
-	amountpaid dbo.zmoney NOT NULL,
-	checkamt dbo.zmoney NOT NULL,
-	checknbr char(20) NOT NULL,
-	checkprintdate smalldatetime NULL,
-	checkprintby dbo.ident NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	status dbo.statustype NOT NULL,
-	payee dbo.shortdesctype NOT NULL,
-	accountnbr char(30) NOT NULL,
-	benefitamt dbo.zmoney NOT NULL,
-	negativeamt dbo.zmoney NOT NULL,
-	billedamt dbo.zmoney NOT NULL,
-	paytype dbo.typecode NOT NULL,
-	totalpool dbo.zmoney NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	reimburseamt dbo.zmoney NOT NULL,
-	totalrefundamt dbo.zmoney NOT NULL,
-	claimmemid dbo.ident NOT NULL,
-	interestenddate smalldatetime NULL,
-	qframeprocesslogid dbo.ident NOT NULL,
-	qframeprocessdetailid dbo.ident NOT NULL,
-	lienpayment dbo.yesnotype NOT NULL,
-	capmessagequeueid dbo.ident NOT NULL,
-	capmessage text NOT NULL,
-	eligibleorgid dbo.ident NOT NULL,
-	ReassociationNbr char(20) NULL,
- CONSTRAINT PKpayment PRIMARY KEY CLUSTERED 
-(
-	paymentid ASC
-)) ;
-CREATE TABLE capvoucher(
-	paymentid dbo.ident NOT NULL,
-	captype dbo.typecode NOT NULL,
-	caprateid dbo.ident NOT NULL,
-	captermid dbo.zint NOT NULL,
-	capmonth dbo.zint NOT NULL,
-	affiliationid dbo.ident NOT NULL,
-	enrollid dbo.ident NOT NULL,
-	fundid dbo.ident NOT NULL,
-	paytoaffilid dbo.ident NOT NULL,
-	capamount dbo.zmoney NOT NULL,
-	daycount dbo.zint NOT NULL,
-	memcount dbo.zint NOT NULL,
-	capdate smalldatetime NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	refundamt dbo.zmoney NOT NULL,
-	networkid dbo.ident NOT NULL,
-	recondate datetime NOT NULL,
-	method dbo.ident NOT NULL,
-	factorvalueid dbo.ident NOT NULL,
-	funddetailid dbo.ident NOT NULL,
-	capadjustmentid dbo.ident NOT NULL,
-	CapFactorId dbo.ident NOT NULL,
- CONSTRAINT PKcapvoucher PRIMARY KEY CLUSTERED 
-(
-	paymentid ASC,
-	captype ASC,
-	caprateid ASC,
-	captermid ASC,
-	capmonth ASC,
-	affiliationid ASC,
-	enrollid ASC,
-	fundid ASC,
-	paytoaffilid ASC,
-	networkid ASC,
-	recondate ASC,
-	factorvalueid ASC,
-	capadjustmentid ASC
-));
-
-
-
+CREATE TABLE [dbo].[V_Member](
+	[MemberId] [dbo].[ident] NOT NULL,
+	[Enrollment_Id] [dbo].[ident] NOT NULL,
+	[Enrollment_EffectiveDate] [smalldatetime] NOT NULL,
+	[Enrollment_TermDate] [smalldatetime] NOT NULL,
+	[Member_Name] [dbo].[udtlongfullname] NOT NULL,
+	[Member_PlanId] [dbo].[ident] NOT NULL,
+	[Program_Id] [dbo].[ident] NOT NULL,
+	[Date_of_Birth] [datetime] NULL,
+	[Member_SSN] [dbo].[ident] NOT NULL,
+	[VIP_Flag] [dbo].[yesnotype] NOT NULL,
+	[Family_ID] [dbo].[ident] NOT NULL,
+	[Gender] [char](1) NOT NULL
+) ;
+CREATE TABLE [dbo].[V_Providers](
+	[Provider_Id] [dbo].[ident] NOT NULL,
+	[Provider_Name] [dbo].[udtlongfullname] NOT NULL,
+	[Provider_Type] [dbo].[shortdesctype] NULL,
+	[Specialty] [dbo].[shortdesctype] NULL,
+	[Provider_Class] [dbo].[ident] NULL,
+	[NPI] [char](10) NULL,
+	[Provider_License] [dbo].[ident] NULL,
+	[License_Effectivedate] [smalldatetime] NULL,
+	[License_termDate] [smalldatetime] NULL
+);
+CREATE TABLE [dbo].[V_Claims_Header](
+	[ClaimID] [dbo].[ident] NOT NULL,
+	[Enrollment_Id] [dbo].[ident] NOT NULL,
+	[Member_Id] [dbo].[ident] NOT NULL,
+	[Provider_Id] [dbo].[ident] NOT NULL,
+	[Affiliation_Id] [dbo].[ident] NOT NULL,
+	[Admission_Date] [smalldatetime] NULL,
+	[Discharge_date] [smalldatetime] NULL,
+	[Claim_Status] [dbo].[statustype] NOT NULL,
+	[SubmissionDate] [smalldatetime] NOT NULL,
+	[formtype] [dbo].[typecode] NOT NULL,
+	[Total_ClaimAmount] [dbo].[zmoney] NOT NULL,
+	[Plan_Id] [dbo].[ident] NOT NULL,
+	[Paid_Date] [smalldatetime] NULL
+) ;
+CREATE TABLE [dbo].[V_Claims_Line](
+	[ClaimID] [dbo].[ident] NOT NULL,
+	[ClaimLineID] [dbo].[zint] NOT NULL,
+	[Service_StartDate] [smalldatetime] NOT NULL,
+	[Service_EndDate] [smalldatetime] NOT NULL,
+	[servcode] [dbo].[servicecode] NOT NULL,
+	[revcode] [dbo].[servicecode] NOT NULL,
+	[billedunits] [dbo].[zmoney] NOT NULL,
+	[Paid_Amount] [dbo].[zmoney] NOT NULL,
+	[InEligible_Amount] [dbo].[zmoney] NOT NULL,
+	[Billed_Amount] [dbo].[zmoney] NOT NULL,
+	[ICDCode] [dbo].[udtdiagcode] NOT NULL
+);
