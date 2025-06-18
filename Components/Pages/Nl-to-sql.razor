@@ -3,11 +3,13 @@
 @inject NLQueryEngine NLQueryEngine
 @inject DatabaseEngine dbEngine
 @inject ProductService ProductService
+@inject UserService UserService
+@inject AuthenticationService AuthService
 @using System.Data
 @using NL2SQL_Blazor.Components.Models
 
 <style>
-      .result-table-container {
+    .result-table-container {
     height: 350px;
     width: 950px;
     overflow: auto;
@@ -38,84 +40,90 @@
     }
 
     .tableclass{
-        width: 100%;
-        border-collapse: collapse;
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        margin: 2px;
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    margin: 2px;
     }
     .tablebody
     {
-        vertical-align: top;           
-        width:100%;
-        font-family:Arial;
-        font-size:15px;
+    vertical-align: top;           
+    width:100%;
+    font-family:Arial;
+    font-size:15px;
 
     }
     .tdwidth{
-     width:65%
+    width:65%
     }
     .tdleft
     {
-        width:70%;
-        vertical-align:top;       
+    width:70%;
+    vertical-align:top;       
     }
     .tdright {
-        width: 30%;
-        vertical-align: top;
+    width: 30%;
+    vertical-align: top;
     }
     .textareainput{
-        width:800px ;
-        height :75px;
+    width:800px ;
+    height :75px;
     }
     .textarearesult
     {
-      width:800px; 
-      height : 100px;
-      scroll-behavior:auto;
+    width:800px; 
+    height : 100px;
+    scroll-behavior:auto;
     }
     .inputddl{
-      width:200px;
-      margin:2px;
+    width:200px;
+    margin:2px;
     }
     .lblhead
     {
-        font-family:Arial;
-        font-size: 30px;
-        font-weight: bold;
-      
+    font-family:Arial;
+    font-size: 30px;
+    font-weight: bold;
+
     }
     .td1{
-        width:18%;
-        text-align: left;
+    width:18%;
+    text-align: left;
     }
 
     .td2 {
-        width: 45%;
-        text-align: left;
+    width: 45%;
+    text-align: left;
     }
 
     .td3 {
-        width: 17%;
-        text-align: left;
+    width: 17%;
+    text-align: left;
     }
     .tdtext{
-        width: 60%; 
-        padding-right: 5px;
+    width: 60%; 
+    padding-right: 5px;
     }
     .heading
     {
-        font-family: Arial;
-        font-size: 20px;
-        font-weight: bold;
-        color: #1976d2;
+    font-family: Arial;
+    font-size: 20px;
+    font-weight: bold;
+    color: #1976d2;
     }
     .subhead{
-        font-family: Arial;
-        font-size: 15px;
-        font-weight: bold;
-        color: #1976d2;
+    font-family: Arial;
+    font-size: 15px;
+    font-weight: bold;
+    color: #1976d2;
     }
+
+    .processing-text {
+        font-size: 10px;
+        vertical-align: middle;
+    }
+
 
 </style>
 
@@ -123,9 +131,9 @@
     <tr>
         <td colspan="2" class="heading">NLQuery Engine</td>
     </tr>
-  <tr>
-  <td class="tdleft">
-<table cellpadding="1" cellspacing="2">
+    <tr>
+        <td class="tdleft">
+            <table cellpadding="1" cellspacing="2">
                 <tr>
                     <td colspan="2">
                         <table cellpadding="1" cellspacing="1">
@@ -134,27 +142,33 @@
                                 <td align="left">
                                     <input class="inputddl" list="products" @bind="product" />
                                     <datalist id="products">
-                                        @foreach (var product in products)
+                                        @if (products != null)
                                         {
-                                            <option value="@product.ProductName">@product.ProductName</option>
+                                            @foreach (var product in products)
+                                            {
+                                                <option value="@product.ProductName"></option>
+                                            }
                                         }
                                     </datalist>
+
                                 </td>
-                                <td align="left"><label>DBServer: {}</label></td>
+                                <td align="left">
+                                    <label>Database Server: @dbserver</label>
+                                </td>
                             </tr>
                         </table>
                     </td>
-                    </tr>
-                    
+                </tr>
+
                 <tr>
                     <td class="tdtext"> <textarea class="textareainput" @bind="userInput" placeholder="Enter your question..."></textarea></td>
-                    <td valign="top" align="right">
+                    <td valign="top" align="right" style="width: 150px">
                         <button class="mt-2 btn btn-primary" @onclick="Convert" disabled="@isLoading">Convert</button>
                         @if (isLoading)
                         {
                             <div class="mt-2 text-primary">
                                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                Processing...
+                                <span class="processing-text">Processing...</span>
                             </div>
                         }
                     </td>
@@ -164,12 +178,12 @@
                     <tr>
                         <td colspan="2" valign="top">
                             <table class="tablebody">
-                                <tr><td colspan="2">SQL Output:</td></tr>
+                                <tr><td colspan="2">@dbserver Output:</td></tr>
                                 <tr>
                                     <td>
                                         <textarea class="textarearesult" @bind="queryOutput"></textarea>
                                     </td>
-                                    <td align="right" valign="top">
+                                    <td align="right" valign="top" style="width: 150px">
                                         <button class="mt-2 btn btn-primary" @onclick="ExecuteSql" disabled="@isExecuting">
                                             @if (isExecuting)
                                             {
@@ -193,45 +207,45 @@
                         </td>
                     </tr>
                 }   
-                
+
                 <tr>
                     <td colspan="2" class="tdleft">
 
-                @if (!string.IsNullOrEmpty(queryOutput) && !isLoading)
-                {
-                    @if (dtResult != null)
-                    {
-                        <div class="result-table-container">
-                            <table class="result-table">
-                                <thead>
-                                    <tr>
-                                        @foreach (DataColumn col in dtResult.Columns)
-                                        {
-                                            <th>@col.ColumnName</th>
-                                        }
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (DataRow row in dtResult.Rows)
-                                    {
-                                        <tr>
-                                            @foreach (var item in row.ItemArray)
+                        @if (!string.IsNullOrEmpty(queryOutput) && !isLoading)
+                        {
+                            @if (dtResult != null)
+                            {
+                                <div class="result-table-container">
+                                    <table class="result-table">
+                                        <thead>
+                                            <tr>
+                                                @foreach (DataColumn col in dtResult.Columns)
+                                                {
+                                                    <th>@col.ColumnName</th>
+                                                }
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (DataRow row in dtResult.Rows)
                                             {
-                                                <td>@item</td>
+                                                <tr>
+                                                    @foreach (var item in row.ItemArray)
+                                                    {
+                                                        <td>@item</td>
+                                                    }
+                                                </tr>
                                             }
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                        }
 
 
                     </td>
                 </tr>
             </table>
-      </td>
+        </td>
         <td class="tdright">
             <table>
                 <tr>
@@ -273,8 +287,8 @@
                 </tr>
             </table>
         </td>
-  </tr>
- </table>
+    </tr>
+</table>
 @code {
 
     private string userInput;
@@ -287,15 +301,35 @@
     private DataTable dtResult;
 
     private int activeTab = 0;
-
-    private string product { get; set; }
     private string dbserver { get; set; }
-    private List<Product> products = new();
+    private IEnumerable<Product> products;
+    Product selectedProduct;
+
+    private string _product;
+    private string product
+    {
+        get => _product;
+        set
+        {
+            if (_product != value)
+            {
+                _product = value;
+                selectedProduct = products.FirstOrDefault(p => p.ProductName == _product);
+                dbserver = selectedProduct?.DBServerName ?? string.Empty;
+            }
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        products = new List<Product> { await ProductService.GetProductByIdAsync(1) };
+        products = await UserService.GetProductsByUserIdAsync(AuthService.CurrentUserId);
+        if (products.Any())
+        {
+            product = products.First().ProductName;
+            dbserver = products.First().DBServerName;
+        }
     }
+
     private async Task Convert()
     {
         isLoading = true;
@@ -303,7 +337,7 @@
         dtResult = new DataTable();
         try
         { 
-            result = await NLQueryEngine.ConvertToQueryAsync(userInput, products.FirstOrDefault());
+            result = await NLQueryEngine.ConvertToQueryAsync(userInput, selectedProduct);
             commands = result.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             if(commands.Length == 0)
             {
@@ -322,6 +356,13 @@
 
     private async Task ExecuteSql()
     {
+        if (HasSqlInjectionPattern(queryOutput))
+        {
+            queryOutput = "Potential SQL injection detected. Execution blocked.";
+            dtResult = null;
+            return;
+        }
+
         isExecuting = true;
         try
         {
@@ -331,6 +372,52 @@
         {
             isExecuting = false;
         }
+    }
+
+    private bool HasSqlInjectionPattern(string sql)
+    {
+        if (string.IsNullOrWhiteSpace(sql))
+            return false;
+
+        var lowered = sql.ToLowerInvariant();
+
+        // 1. Dangerous keywords and functions
+        string[] keywords = {
+        "alter", "create ", "delete", "drop", "exec", "execute", "insert", "merge", "update", "union", "truncate", "grant", "revoke", "declare",
+        "cast(", "set", "sysobjects", "syscolumns", "information_schema", "xp_"
+        };
+
+        foreach (var keyword in keywords)
+        {
+            if (lowered.Contains(keyword))
+                return true;
+        }
+
+        // 2. Statement separators and comments
+        if (lowered.Contains(";") || lowered.Contains("--") || lowered.Contains("/*") || lowered.Contains("*/"))
+            return true;
+
+        // 3. Tautologies and always-true conditions
+        if (System.Text.RegularExpressions.Regex.IsMatch(lowered, @"(\b|\W)(\d+\s*=\s*\d+|'[^']*'\s*=\s*'[^']*')(\b|\W)"))
+            return true;
+
+        // 4. Unbalanced or excessive quotes
+        int singleQuotes = lowered.Count(c => c == '\'');
+        int doubleQuotes = lowered.Count(c => c == '"');
+        if (singleQuotes % 2 != 0 || doubleQuotes % 2 != 0)
+            return true;
+        if (singleQuotes > 10 || doubleQuotes > 10)
+            return true;
+
+        // 5. Hex/binary patterns
+        if (System.Text.RegularExpressions.Regex.IsMatch(lowered, @"0x[0-9a-f]+"))
+            return true;
+
+        // 6. Batch/command chaining
+        if (System.Text.RegularExpressions.Regex.IsMatch(lowered, @"\b(waitfor|sleep|benchmark|shutdown|;)\b"))
+            return true;
+
+        return false;
     }
 
     private List<string> prompts = new List<string>()

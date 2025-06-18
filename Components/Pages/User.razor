@@ -21,7 +21,7 @@ else
             <tr>
                 <th>User ID</th>
                 <th>User Name</th>
-                <th>Product Name</th>
+                <th>Role</th>
             </tr>
         </thead>
         <tbody>
@@ -30,21 +30,7 @@ else
                 <tr>
                     <td>@user.UserId</td>
                     <td>@user.Username</td>
-                    <td>
-                        @if (editingUserId == user.UserId)
-                        {
-                            <select class="form-select" @bind="selectedProductName">
-                                @foreach (var prodName in productName)
-                                {
-                                    <option value="@prodName">@prodName</option>
-                                }
-                            </select>
-                        }
-                        else
-                        {
-                            @user.ProductName
-                        }
-                    </td>
+                    <td>@user.Role</td>
                     <td>
                         @if (editingUserId == user.UserId)
                         {

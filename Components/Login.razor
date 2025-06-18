@@ -40,23 +40,22 @@
         margin-bottom: 1rem;
         text-align: center;
     }
-    .login-btn {
-        width: 100%;
+    .login-btn, .sso-btn {
+        width: 150px;
         font-weight: 600;
-    }
-    .sso-btn {
-        width: 100%;
-        font-weight: 600;
-        font-weight:bold;
-        margin-top: 0.5rem;
-        background: #2575fc;
-        color: #ffffff;
-        border: 2px solid #2575fc;
-        margin-bottom: 2rem;
-    }
-    .sso-btn:hover {
         background: #2575fc;
         color: #fff;
+        border: 2px solid #2575fc;
+        transition: background 0.2s, color 0.2s;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .login-btn:hover, .login-btn:focus,
+    .sso-btn:hover, .sso-btn:focus {
+        background: #1250b5;
+        color: #fff;
+        border-color: #1250b5;
     }
 </style>
 
@@ -79,11 +78,11 @@
                 <label for="password" class="form-label">Password</label>
                 <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" autocomplete="current-password" />
             </div>
-            <button type="submit" class="btn btn-primary login-btn">Login</button>
+            <button type="submit" class="login-btn">Login</button>
         </EditForm>
         <div class="text-center my-2" style="font-weight: 500; color: #2575fc; font-size: 0.95rem;">Or sign in with</div>
         <EditForm Model="loginModel" OnValidSubmit="HandleSsoLogin" FormName="ssoForm">
-            <button class="btn sso-btn" type="submit" disabled>
+            <button class="sso-btn" type="submit" disabled>
                 Login with SSO
             </button>
         </EditForm>
