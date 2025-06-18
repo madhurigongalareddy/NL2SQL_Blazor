@@ -1,104 +1,222 @@
-CREATE TABLE dbo.claim (claimid INT , referralid VARCHAR(30), enrollid INT , startdate DATETIME , enddate DATETIME , totalamt DECIMAL(18,2) , status VARCHAR(20) , planid INT , paiddate DATETIME );
-CREATE TABLE claim837 (claimid int, billingprovname varchar(50), billingprovidentifier char(80));
-CREATE TABLE Claim837Adjustment (ClaimId int, FrequencyCode char(1), ReqType varchar(10), Status varchar(50));
-CREATE TABLE ClaimAdjustment (ClaimId int, Payer int, ClaimAdjustmentGroupCode varchar(50), HipaaAdjReasonCodeId int, Amount decimal(18,2));
-CREATE TABLE claimapc (claimid int, totalpaymentamt decimal(18,2), paymentamt decimal(18,2), deductibleamt decimal(18,2), coinsuranceamt decimal(18,2));
-CREATE TABLE claimattribute (claimid int, attributeid int, effdate smalldatetime, thevalue varchar(60));
-CREATE TABLE claimauthmatch (claimauthmatchid int, matchtype char(1), matchid int, referralid int);
-CREATE TABLE ClaimAutoAdjust (HistoryClaimId int, ClaimId int, ClaimHistoryType varchar(50), Status varchar(50));
-CREATE TABLE ClaimAutoAdjust_Audit (HistoryClaimID int, ClaimID int, ClaimHistoryType varchar(50), Status varchar(50), ChangeType int, Time_Of_Change varchar(50));
-CREATE TABLE claimbatch (batchid int, claimid int, sequence int, uniqueid char(50));
-CREATE TABLE ClaimCarcDetail (ClaimCarcDetailId int, ClaimId int, ClaimLine int, RuleId int, CarcCode int);
-CREATE TABLE claimcond (claimid int, condcode char(2));
-CREATE TABLE claimdetail (claimid int, claimline int, referralid char(30), revcode varchar(50), planid int, total decimal(18,2), dosfrom smalldatetime, dosto smalldatetime, status varchar(50));
-CREATE TABLE ClaimDetailAdjustment (ClaimId int, ClaimLine int, Payer int, ClaimAdjustmentGroupCode varchar(50), HipaaAdjReasonCodeId int, Amount decimal(18,2));
-CREATE TABLE claimdetailapc (claimid int, claimline int, paymentapc char(5), hcpcsapc char(5), totalpaymentamt decimal(18,2), paymentamt decimal(18,2), deductibleamt decimal(18,2), coinsuranceamt decimal(18,2));
-CREATE TABLE claimdetailcdh (claimid int, claimline int, hragrouporgpolicyid int, fsaeligible varchar(50), hsaeligible varchar(50), hraeligible varchar(50));
-CREATE TABLE ClaimDetailEAPG (ClaimID int, ClaimLine int, FinalEAPG char(5), PricingStatus char(2));
+CREATE TABLE [dbo].[V_Claim](
+	[ClaimId] [dbo].[ident] NOT NULL,
+	[MemberEnrollmentId] [dbo].[ident] NOT NULL,
+	[MemberId] [dbo].[ident] NOT NULL,
+	[ProviderId] [dbo].[ident] NOT NULL,
+	[AttendingPhysicianId] [dbo].[ident] NOT NULL,
+	[AttendingPhysicianName] [dbo].[shortdesctype] NOT NULL,
+	[ServiceStartDate] [smalldatetime] NOT NULL,
+	[ServiceEndDate] [smalldatetime] NOT NULL,
+	[AdmissionDate] [smalldatetime] NULL,
+	[DischargeDate] [smalldatetime] NULL,
+	[AdmissionTypeCode] [char](1) NOT NULL,
+	[AdmissionSourceCode] [char](1) NOT NULL,
+	[PatientStatusCode] [char](2) NOT NULL,
+	[BillClassCode] [char](1) NOT NULL,
+	[FrequencyCode] [char](1) NOT NULL,
+	[ClaimFormType] [dbo].[typecode] NOT NULL,
+	[ClaimStatus] [dbo].[statustype] NOT NULL,
+	[PlanId] [dbo].[ident] NOT NULL,
+	[PayerId] [dbo].[ident] NOT NULL,
+	[TotalClaimAmount] [dbo].[zmoney] NOT NULL,
+	[TotalPaidAmount] [dbo].[zmoney] NOT NULL,
+	[EligibleAmount] [dbo].[zmoney] NOT NULL,
+	[TotalDeductible] [dbo].[zmoney] NOT NULL,
+	[EOBAmount] [dbo].[zmoney] NOT NULL,
+	[EOBEligibleAmount] [dbo].[zmoney] NOT NULL,
+	[TotalReimbursedAmount] [dbo].[zmoney] NOT NULL,
+	[TotalRefundAmount] [dbo].[zmoney] NOT NULL,
+	[ShareOfCost] [dbo].[zmoney] NOT NULL,
+	[CoordinationOfBenefitsId] [dbo].[ident] NULL,
+	[DRGCode] [dbo].[servicecode] NOT NULL,
+	[LogDate] [smalldatetime] NOT NULL,
+	[AdjudicationDate] [smalldatetime] NULL,
+	[PaidDate] [smalldatetime] NULL,
+	[ClaimCreateDate] [dbo].[createdatetype] NOT NULL,
+	[LastUpdateDate] [dbo].[lastupdatetype] NOT NULL,
+	[DenialOrReasonCode] [char](30) NOT NULL,
+	[ContractId] [dbo].[ident] NOT NULL,
+	[PlanControlNumber] [char](50) NULL,
+	[RemittanceNumber] [dbo].[ident] NOT NULL,
+	[OriginalClaimId] [dbo].[ident] NOT NULL,
+	[ResubmittedClaimId] [dbo].[ident] NOT NULL,
+	[ExternalClaimId] [varchar](30) NULL,
+	[ExternalEnrollmentId] [dbo].[ident] NOT NULL,
+	[IsEncounterClaim] [dbo].[yesnotype] NOT NULL,
+	[IsEmploymentRelated] [dbo].[yesnotype] NOT NULL,
+	[IsAutoAccident] [dbo].[yesnotype] NOT NULL,
+	[IsOtherAccident] [dbo].[yesnotype] NOT NULL,
+	[PriorPaymentAmount] [dbo].[zmoney] NOT NULL,
+	[EstimatedAmountDue] [dbo].[zmoney] NOT NULL
+);
+CREATE TABLE [dbo].[V_Claim837](
+	[ClaimId] [dbo].[ident] NOT NULL,
+	[BillingProviderName] [dbo].[udtlongfullname] NOT NULL,
+	[BillingProviderQualifier] [char](2) NOT NULL,
+	[BillingProviderIdentifier] [char](80) NOT NULL,
+	[CreatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[CreatedDate] [dbo].[createdatetype] NOT NULL,
+	[UpdatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[LastUpdateDate] [dbo].[lastupdatetype] NOT NULL
+);
+CREATE TABLE [dbo].[V_ClaimAdjustment](
+	[ClaimId] [dbo].[ident] NOT NULL,
+	[PayerId] [dbo].[ident] NOT NULL,
+	[AdjustmentGroupCode] [dbo].[typecode] NOT NULL,
+	[HipaaAdjustmentReasonCodeId] [dbo].[ident] NOT NULL,
+	[AdjustmentAmount] [dbo].[zmoney] NOT NULL,
+	[AdjustmentUnits] [dbo].[zmoney] NOT NULL,
+	[CreatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[CreatedDate] [dbo].[udtlongdate] NOT NULL,
+	[UpdatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[LastUpdateDate] [dbo].[udtlongdate] NOT NULL
+); 
+CREATE TABLE [dbo].[V_claimapc](
+	[ClaimId] [dbo].[ident] NOT NULL,
+	[TotalPaymentAmount] [dbo].[zmoney] NOT NULL,
+	[PaymentAmount] [dbo].[zmoney] NOT NULL,
+	[DeductibleAmount] [dbo].[zmoney] NOT NULL,
+	[CoinsuranceAmount] [dbo].[zmoney] NOT NULL,
+	[OutlierAmount] [dbo].[zmoney] NOT NULL,
+	[MsaCode] [char](4) NOT NULL,
+	[WageIndex] [dbo].[zmoney] NOT NULL,
+	[EditorEditMessages] [text] NOT NULL,
+	[EditorFailureMessages] [text] NOT NULL,
+	[PricerReturnMessages] [text] NOT NULL,
+	[CreatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[CreateDate] [dbo].[createdatetype] NOT NULL,
+	[UpdatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[LastUpdate] [dbo].[lastupdatetype] NOT NULL
+);
+CREATE TABLE [dbo].[V_claimattribute](
+	[ClaimId] [dbo].[ident] NOT NULL,
+	[AttributeId] [dbo].[ident] NOT NULL,
+	[EffectiveDate] [smalldatetime] NOT NULL,
+	[AttributeValue] [varchar](60) NOT NULL,
+	[TerminationDate] [smalldatetime] NOT NULL,
+	[CreatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[CreateDate] [dbo].[createdatetype] NOT NULL,
+	[UpdatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[LastUpdate] [dbo].[lastupdatetype] NOT NULL
+);
+CREATE TABLE [dbo].[V_claimauthmatch](
+	[ClaimAuthMatchId] [dbo].[ident] NOT NULL,
+	[MatchType] [char](1) NOT NULL,
+	[MatchId] [dbo].[ident] NOT NULL,
+	[ReferralId] [dbo].[ident] NOT NULL,
+	[CreatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[CreateDate] [dbo].[createdatetype] NOT NULL,
+	[UpdatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[LastUpdate] [dbo].[lastupdatetype] NOT NULL
+);
+CREATE TABLE [dbo].[V_ClaimAutoAdjust](
+	[HistoryClaimId] [dbo].[ident] NOT NULL,
+	[HistoryClaimLine] [dbo].[zint] NOT NULL,
+	[ClaimId] [dbo].[ident] NOT NULL,
+	[ClaimHistoryType] [dbo].[typecode] NOT NULL,
+	[RuleId] [dbo].[zint] NULL,
+	[Status] [dbo].[statustype] NOT NULL,
+	[CreatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[CreateDate] [dbo].[udtlongdate] NOT NULL,
+	[UpdatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[LastUpdate] [dbo].[udtlongdate] NOT NULL
+);
+
+CREATE TABLE [dbo].[V_claimbatch](
+	[BatchId] [dbo].[ident] NOT NULL,
+	[ClaimId] [dbo].[ident] NOT NULL,
+	[Sequence] [dbo].[zint] NOT NULL,
+	[UniqueId] [char](50) NOT NULL,
+	[ErrorCount] [int] NOT NULL,
+	[CreatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[CreateDate] [dbo].[createdatetype] NOT NULL,
+	[UpdatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[LastUpdate] [dbo].[lastupdatetype] NOT NULL
+) ;
+
+CREATE TABLE [dbo].[V_ClaimCarcDetail](
+	[ClaimCarcDetailId] [dbo].[ident] NOT NULL,
+	[ClaimId] [dbo].[ident] NOT NULL,
+	[ClaimLine] [dbo].[zint] NOT NULL,
+	[RuleId] [dbo].[zint] NOT NULL,
+	[AdjustmentScenarioId] [dbo].[ident] NULL,
+	[CarcCode] [dbo].[ident] NOT NULL,
+	[CreatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[CreateDate] [dbo].[createdatetype] NOT NULL,
+	[UpdatedByUserId] [dbo].[udtuserid] NOT NULL,
+	[LastUpdate] [dbo].[lastupdatetype] NOT NULL
+);
+CREATE TABLE [dbo].[V_Claims_Line](
+	[ClaimID] [dbo].[ident] NOT NULL,
+	[ClaimLineID] [dbo].[zint] NOT NULL,
+	[Service_StartDate] [smalldatetime] NOT NULL,
+	[Service_EndDate] [smalldatetime] NOT NULL,
+	[servcode] [dbo].[servicecode] NOT NULL,
+	[revcode] [dbo].[servicecode] NOT NULL,
+	[billedunits] [dbo].[zmoney] NOT NULL,
+	[Paid_Amount] [dbo].[zmoney] NOT NULL,
+	[InEligible_Amount] [dbo].[zmoney] NOT NULL,
+	[Billed_Amount] [dbo].[zmoney] NOT NULL,
+	[ICDCode] [dbo].[udtdiagcode] NOT NULL
+);
 
 
-CREATE TABLE payment(
-	paymentid dbo.ident NOT NULL,
-	memid dbo.ident NOT NULL,
-	programid dbo.ident NOT NULL,
-	provid dbo.ident NOT NULL,
-	paydiscount dbo.zmoney NOT NULL,
-	advanceapplied dbo.zmoney NOT NULL,
-	paydate smalldatetime NULL,
-	amountpaid dbo.zmoney NOT NULL,
-	checkamt dbo.zmoney NOT NULL,
-	checknbr char(20) NOT NULL,
-	checkprintdate smalldatetime NULL,
-	checkprintby dbo.ident NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	status dbo.statustype NOT NULL,
-	payee dbo.shortdesctype NOT NULL,
-	accountnbr char(30) NOT NULL,
-	benefitamt dbo.zmoney NOT NULL,
-	negativeamt dbo.zmoney NOT NULL,
-	billedamt dbo.zmoney NOT NULL,
-	paytype dbo.typecode NOT NULL,
-	totalpool dbo.zmoney NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	reimburseamt dbo.zmoney NOT NULL,
-	totalrefundamt dbo.zmoney NOT NULL,
-	claimmemid dbo.ident NOT NULL,
-	interestenddate smalldatetime NULL,
-	qframeprocesslogid dbo.ident NOT NULL,
-	qframeprocessdetailid dbo.ident NOT NULL,
-	lienpayment dbo.yesnotype NOT NULL,
-	capmessagequeueid dbo.ident NOT NULL,
-	capmessage text NOT NULL,
-	eligibleorgid dbo.ident NOT NULL,
-	ReassociationNbr char(20) NULL,
- CONSTRAINT PKpayment PRIMARY KEY CLUSTERED 
-(
-	paymentid ASC
-)) ;
-CREATE TABLE capvoucher(
-	paymentid dbo.ident NOT NULL,
-	captype dbo.typecode NOT NULL,
-	caprateid dbo.ident NOT NULL,
-	captermid dbo.zint NOT NULL,
-	capmonth dbo.zint NOT NULL,
-	affiliationid dbo.ident NOT NULL,
-	enrollid dbo.ident NOT NULL,
-	fundid dbo.ident NOT NULL,
-	paytoaffilid dbo.ident NOT NULL,
-	capamount dbo.zmoney NOT NULL,
-	daycount dbo.zint NOT NULL,
-	memcount dbo.zint NOT NULL,
-	capdate smalldatetime NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	refundamt dbo.zmoney NOT NULL,
-	networkid dbo.ident NOT NULL,
-	recondate datetime NOT NULL,
-	method dbo.ident NOT NULL,
-	factorvalueid dbo.ident NOT NULL,
-	funddetailid dbo.ident NOT NULL,
-	capadjustmentid dbo.ident NOT NULL,
-	CapFactorId dbo.ident NOT NULL,
- CONSTRAINT PKcapvoucher PRIMARY KEY CLUSTERED 
-(
-	paymentid ASC,
-	captype ASC,
-	caprateid ASC,
-	captermid ASC,
-	capmonth ASC,
-	affiliationid ASC,
-	enrollid ASC,
-	fundid ASC,
-	paytoaffilid ASC,
-	networkid ASC,
-	recondate ASC,
-	factorvalueid ASC,
-	capadjustmentid ASC
-));
-
-
-
+CREATE TABLE [dbo].[V_claimcond](
+	[ClaimId] [dbo].[ident] NOT NULL,
+	[ConditionCode] [char](2) NOT NULL,
+	[CreatedDate] [dbo].[createdatetype] NOT NULL,
+	[CreatedByUserId] [dbo].[udtuserid] NOT NULL
+);
+CREATE TABLE [dbo].[V_claimdetail](
+	[ClaimId] [dbo].[ident] NOT NULL,
+	[ClaimLine] [dbo].[zint] NOT NULL,
+	[RevenueCode] [dbo].[servicecode] NOT NULL,
+	[ServiceCode] [dbo].[servicecode] NOT NULL,
+	[ServiceFromDate] [smalldatetime] NOT NULL,
+	[ServiceToDate] [smalldatetime] NOT NULL,
+	[LineStatus] [dbo].[statustype] NOT NULL,
+	[ClaimAmount] [dbo].[zmoney] NOT NULL,
+	[AmountPaid] [dbo].[zmoney] NOT NULL,
+	[DeductibleAmount] [dbo].[zmoney] NOT NULL,
+	[CoinsuranceAmount] [dbo].[zmoney] NOT NULL,
+	[CopayAmount] [dbo].[zmoney] NOT NULL,
+	[PlanId] [dbo].[ident] NOT NULL,
+	[ContractId] [dbo].[ident] NOT NULL,
+	[BenefitId] [dbo].[ident] NOT NULL,
+	[CreatedDate] [dbo].[createdatetype] NOT NULL,
+	[CreatedByUserId] [dbo].[udtuserid] NOT NULL
+);
+CREATE TABLE [dbo].[V_claimdetailapc](
+	[ClaimId] [dbo].[ident] NOT NULL,
+	[ClaimLine] [dbo].[zint] NOT NULL,
+	[PaymentAPC] [char](5) NOT NULL,
+	[HCPCS_APC] [char](5) NOT NULL,
+	[TotalPaymentAmount] [dbo].[zmoney] NOT NULL,
+	[PaymentAmount] [dbo].[zmoney] NOT NULL,
+	[DeductibleAmount] [dbo].[zmoney] NOT NULL,
+	[CoinsuranceAmount] [dbo].[zmoney] NOT NULL,
+	[OutlierAmount] [dbo].[zmoney] NOT NULL,
+	[CreatedDate] [dbo].[createdatetype] NOT NULL,
+	[CreatedByUserId] [dbo].[udtuserid] NOT NULL
+);
+CREATE TABLE [dbo].[V_claimdetailcdh](
+	[ClaimId] [dbo].[ident] NOT NULL,
+	[ClaimLine] [dbo].[zint] NOT NULL,
+	[HraGroupOrgPolicyId] [dbo].[ident] NOT NULL,
+	[IsFSAEligible] [dbo].[yesnotype] NOT NULL,
+	[IsHSAEligible] [dbo].[yesnotype] NOT NULL,
+	[IsHRAEligible] [dbo].[yesnotype] NOT NULL,
+	[CDHAllocation] [dbo].[zmoney] NOT NULL,
+	[CreatedDate] [dbo].[createdatetype] NOT NULL,
+	[CreatedByUserId] [dbo].[udtuserid] NOT NULL
+);
+CREATE TABLE [dbo].[V_claimdiag](
+	[ClaimId] [dbo].[ident] NOT NULL,
+	[DiagnosisCode] [dbo].[udtdiagcode] NOT NULL,
+	[DiagnosisType] [dbo].[typecode] NOT NULL,
+	[ICDVersion] [char](1) NOT NULL,
+	[DiagnosisSequence] [dbo].[zint] NOT NULL,
+	[DiagnosisStatus] [char](1) NULL,
+	[CreatedDate] [dbo].[createdatetype] NOT NULL,
+	[CreatedByUserId] [dbo].[udtuserid] NOT NULL
+);

@@ -1,0 +1,93 @@
+﻿@page "/help"
+@rendermode InteractiveServer
+
+<style>
+    .home-content, .help-content {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        font-size: 0.95rem;
+        color: #222;
+        max-width: 800px;
+        /* Remove margin: 0 auto; to left-align */
+        margin-left: 0;
+    }
+
+        .home-content h2, .help-content h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            margin-top: 0.5rem;
+            color: #222;
+        }
+
+        .home-content h4, .help-content h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            margin-top: 0.5rem;
+            color: #222;
+        }
+
+        .home-content p, .home-content ul, .home-content ol,
+        .help-content p, .help-content ul, .help-content ol {
+            font-size: 0.95rem;
+            color: #222;
+            margin-bottom: 0.5rem;
+        }
+
+        .home-content ul, .home-content ol,
+        .help-content ul, .help-content ol {
+            margin-bottom: 0.5rem;
+            padding-left: 1.2rem;
+        }
+
+        .home-content section, .help-content section {
+            margin-bottom: 1rem;
+        }
+</style>
+
+
+<PageTitle>Help</PageTitle>
+<div class="help-content container mt-4">
+    <h2>Claim Craft Help &amp; User Guide</h2>
+
+    <section class="mb-4">
+        <p>
+            This guide provides an overview of Claim Craft's features and step-by-step instructions for business users.
+        </p>
+    </section>
+
+    <section class="mb-4">
+        <h4>Getting Started</h4>
+        <ol>
+            <li>Login with your credentials.</li>
+            <li>Use the menu to access Home, NLQuery Engine, Profile, and Help.</li>
+        </ol>
+    </section>
+
+    <section class="mb-4">
+        <h4>Using the NLQuery Engine</h4>
+        <ol>
+            <li>Select your product and database version.</li>
+            <li>Type your question in plain English (e.g., "Show all claims approved last month").</li>
+            <li>Click <strong>Convert</strong> to get the query command.</li>
+            <li>Click <strong>Execute</strong> to view the results.</li>
+            <li>Export or share results as needed.</li>
+        </ol>
+    </section>
+
+    <section class="mb-4">
+        <h4>Profile Management</h4>
+        <ul>
+            <li>View and update your profile information.</li>
+            <li>Contact your admin for access changes.</li>
+        </ul>
+    </section>
+
+    <section class="mb-4">
+        <h4>Support</h4>
+        <ul>
+            <li>For issues, contact your system administrator or IT support.</li>
+            <li>For feedback or feature requests, reach out to the Claim Craft Team.</li>
+        </ul>
+    </section>
+</div>

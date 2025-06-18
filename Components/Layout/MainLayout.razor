@@ -48,6 +48,37 @@
         margin-left: 4px;
     }
 
+    .profile-panel {
+        position: absolute;
+        top: 60px;
+        right: 32px;
+        min-width: 180px;
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        z-index: 2000;
+        padding: 0.75rem 1rem;
+    }
+
+    .profile-panel .username {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .profile-panel .logout-link {
+        color: #0d6efd;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .profile-panel .logout-link:hover {
+        text-decoration: underline;
+    }
+
 </style>
 
 <div class="page">
@@ -58,6 +89,16 @@
     <main>
         <div class="top-row px-4">
             <a class="navbar-brand" href="">You ask, we write. Let your data speak!</a>
+            <button class="btn btn-link p-0" style="text-decoration:none;" @onclick="ToggleProfilePanel" title="Profile">
+                <span class="bi bi-person-circle" style="font-size:2rem; color:#0d6efd;"></span>
+            </button>
+            @if (showProfilePanel)
+            {
+                <div class="profile-panel" @onclick:stopPropagation>
+                    <span class="username">@AuthService.CurrentUsername</span>
+                    <a class="logout-link" @onclick="Logout">Logout</a>
+                </div>
+            }
         </div>
 
         <article class="content px-4">
@@ -74,3 +115,21 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+    [Inject] private AuthenticationService AuthService { get; set; }
+    [Inject] private NavigationManager Navigation { get; set; }
+
+    private bool showProfilePanel = false;
+    private void ToggleProfilePanel() => showProfilePanel = !showProfilePanel;
+
+    private async Task Logout()
+    {
+        await AuthService.LogoutAsync();
+        Navigation.NavigateTo("/login", true);
+    }
+}
+
+
+
+

@@ -1,35 +1,17 @@
-﻿CREATE TABLE member(
-	memid dbo.ident NOT NULL,
-	entityid dbo.ident NOT NULL,
-	status dbo.statustype NOT NULL,
-	sex char(1) NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	fullname dbo.udtlongfullname NOT NULL,
-	headofhouse dbo.ident NOT NULL,
-	guardian dbo.ident NOT NULL,
-	medincome dbo.zint NOT NULL,
-	ethnicid dbo.ident NOT NULL,
-	primarylanguage dbo.ident NOT NULL,
-	ssn dbo.ident NOT NULL,
-	dob datetime NULL,
-	deathdate smalldatetime NULL,
-	marital char(1) NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	multiplebirth dbo.yesnotype NOT NULL,
-	isvip dbo.yesnotype NOT NULL,
-	issubscriber dbo.yesnotype NOT NULL,
-	umin dbo.ident NOT NULL,
-	secondaryid dbo.ident NOT NULL,
-	enterpriseid dbo.nametype NOT NULL,
-	externalediting dbo.yesnotype NOT NULL,
-	EligibilityOfficeId dbo.ident NULL,
-	ExternalId varchar(15) NULL,
- CONSTRAINT PKmember PRIMARY KEY CLUSTERED 
-(
-	memid ASC
-));
+﻿CREATE TABLE [dbo].[V_Member](
+	[MemberId] [dbo].[ident] NOT NULL,
+	[Enrollment_Id] [dbo].[ident] NOT NULL,
+	[Enrollment_EffectiveDate] [smalldatetime] NOT NULL,
+	[Enrollment_TermDate] [smalldatetime] NOT NULL,
+	[Member_Name] [dbo].[udtlongfullname] NOT NULL,
+	[Member_PlanId] [dbo].[ident] NOT NULL,
+	[Program_Id] [dbo].[ident] NOT NULL,
+	[Date_of_Birth] [datetime] NULL,
+	[Member_SSN] [dbo].[ident] NOT NULL,
+	[VIP_Flag] [dbo].[yesnotype] NOT NULL,
+	[Family_ID] [dbo].[ident] NOT NULL,
+	[Gender] [char](1) NOT NULL
+) ;
 
 CREATE TABLE [dbo].[memberpcp](
 	[affiliationid] [dbo].[ident] NOT NULL,
