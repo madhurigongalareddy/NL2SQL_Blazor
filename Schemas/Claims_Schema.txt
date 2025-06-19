@@ -1,104 +1,132 @@
-CREATE TABLE dbo.claim (claimid INT , referralid VARCHAR(30), enrollid INT , startdate DATETIME , enddate DATETIME , totalamt DECIMAL(18,2) , status VARCHAR(20) , planid INT , paiddate DATETIME );
-CREATE TABLE claim837 (claimid int, billingprovname varchar(50), billingprovidentifier char(80));
-CREATE TABLE Claim837Adjustment (ClaimId int, FrequencyCode char(1), ReqType varchar(10), Status varchar(50));
-CREATE TABLE ClaimAdjustment (ClaimId int, Payer int, ClaimAdjustmentGroupCode varchar(50), HipaaAdjReasonCodeId int, Amount decimal(18,2));
-CREATE TABLE claimapc (claimid int, totalpaymentamt decimal(18,2), paymentamt decimal(18,2), deductibleamt decimal(18,2), coinsuranceamt decimal(18,2));
-CREATE TABLE claimattribute (claimid int, attributeid int, effdate smalldatetime, thevalue varchar(60));
-CREATE TABLE claimauthmatch (claimauthmatchid int, matchtype char(1), matchid int, referralid int);
-CREATE TABLE ClaimAutoAdjust (HistoryClaimId int, ClaimId int, ClaimHistoryType varchar(50), Status varchar(50));
-CREATE TABLE ClaimAutoAdjust_Audit (HistoryClaimID int, ClaimID int, ClaimHistoryType varchar(50), Status varchar(50), ChangeType int, Time_Of_Change varchar(50));
-CREATE TABLE claimbatch (batchid int, claimid int, sequence int, uniqueid char(50));
-CREATE TABLE ClaimCarcDetail (ClaimCarcDetailId int, ClaimId int, ClaimLine int, RuleId int, CarcCode int);
-CREATE TABLE claimcond (claimid int, condcode char(2));
-CREATE TABLE claimdetail (claimid int, claimline int, referralid char(30), revcode varchar(50), planid int, total decimal(18,2), dosfrom smalldatetime, dosto smalldatetime, status varchar(50));
-CREATE TABLE ClaimDetailAdjustment (ClaimId int, ClaimLine int, Payer int, ClaimAdjustmentGroupCode varchar(50), HipaaAdjReasonCodeId int, Amount decimal(18,2));
-CREATE TABLE claimdetailapc (claimid int, claimline int, paymentapc char(5), hcpcsapc char(5), totalpaymentamt decimal(18,2), paymentamt decimal(18,2), deductibleamt decimal(18,2), coinsuranceamt decimal(18,2));
-CREATE TABLE claimdetailcdh (claimid int, claimline int, hragrouporgpolicyid int, fsaeligible varchar(50), hsaeligible varchar(50), hraeligible varchar(50));
-CREATE TABLE ClaimDetailEAPG (ClaimID int, ClaimLine int, FinalEAPG char(5), PricingStatus char(2));
-
-
-CREATE TABLE payment(
-	paymentid dbo.ident NOT NULL,
-	memid dbo.ident NOT NULL,
-	programid dbo.ident NOT NULL,
-	provid dbo.ident NOT NULL,
-	paydiscount dbo.zmoney NOT NULL,
-	advanceapplied dbo.zmoney NOT NULL,
-	paydate smalldatetime NULL,
-	amountpaid dbo.zmoney NOT NULL,
-	checkamt dbo.zmoney NOT NULL,
-	checknbr char(20) NOT NULL,
-	checkprintdate smalldatetime NULL,
-	checkprintby dbo.ident NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	status dbo.statustype NOT NULL,
-	payee dbo.shortdesctype NOT NULL,
-	accountnbr char(30) NOT NULL,
-	benefitamt dbo.zmoney NOT NULL,
-	negativeamt dbo.zmoney NOT NULL,
-	billedamt dbo.zmoney NOT NULL,
-	paytype dbo.typecode NOT NULL,
-	totalpool dbo.zmoney NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	reimburseamt dbo.zmoney NOT NULL,
-	totalrefundamt dbo.zmoney NOT NULL,
-	claimmemid dbo.ident NOT NULL,
-	interestenddate smalldatetime NULL,
-	qframeprocesslogid dbo.ident NOT NULL,
-	qframeprocessdetailid dbo.ident NOT NULL,
-	lienpayment dbo.yesnotype NOT NULL,
-	capmessagequeueid dbo.ident NOT NULL,
-	capmessage text NOT NULL,
-	eligibleorgid dbo.ident NOT NULL,
-	ReassociationNbr char(20) NULL,
- CONSTRAINT PKpayment PRIMARY KEY CLUSTERED 
+CREATE TABLE dbo.V_Claims_Header(
+	ClaimID VARCHAR(15) NOT NULL,
+	Enrollment_Id VARCHAR(15) NOT NULL,
+	Member_Id VARCHAR(15) NOT NULL,
+	Provider_Id VARCHAR(15) NOT NULL,
+	Affiliation_Id VARCHAR(15) NOT NULL,
+	Admission_Date DATETIME NULL,
+	Discharge_date DATETIME NULL,
+	Claim_Status VARCHAR(10) NOT NULL,
+	SubmissionDate DATETIME NOT NULL,
+	formtype VARCHAR(15) NOT NULL,
+	Total_ClaimAmount MONEY NOT NULL,
+	Plan_Id VARCHAR(15) NOT NULL,
+	Paid_Date DATETIME NULL,
+	CONSTRAINT PKclaim PRIMARY KEY CLUSTERED 
 (
-	paymentid ASC
-)) ;
-CREATE TABLE capvoucher(
-	paymentid dbo.ident NOT NULL,
-	captype dbo.typecode NOT NULL,
-	caprateid dbo.ident NOT NULL,
-	captermid dbo.zint NOT NULL,
-	capmonth dbo.zint NOT NULL,
-	affiliationid dbo.ident NOT NULL,
-	enrollid dbo.ident NOT NULL,
-	fundid dbo.ident NOT NULL,
-	paytoaffilid dbo.ident NOT NULL,
-	capamount dbo.zmoney NOT NULL,
-	daycount dbo.zint NOT NULL,
-	memcount dbo.zint NOT NULL,
-	capdate smalldatetime NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	refundamt dbo.zmoney NOT NULL,
-	networkid dbo.ident NOT NULL,
-	recondate datetime NOT NULL,
-	method dbo.ident NOT NULL,
-	factorvalueid dbo.ident NOT NULL,
-	funddetailid dbo.ident NOT NULL,
-	capadjustmentid dbo.ident NOT NULL,
-	CapFactorId dbo.ident NOT NULL,
- CONSTRAINT PKcapvoucher PRIMARY KEY CLUSTERED 
+	claimid ASC
+)
+);
+
+ALTER TABLE dbo.V_Claims_Header ADD  CONSTRAINT FK_CLAIMHeader_MemberId FOREIGN KEY(Member_Id)
+REFERENCES dbo.V_Members (MemberId);
+
+ALTER TABLE dbo.V_Claims_Header  ADD  CONSTRAINT FK_CLAIMHeader_ProviderId FOREIGN KEY(Provider_Id)
+REFERENCES dbo.V_provider (ProviderId);
+
+
+
+CREATE TABLE dbo.V_Claims_Line(
+	ClaimID VARCHAR(15) NOT NULL,
+	ClaimLineID INT NOT NULL,
+	Service_StartDate DATETIME NOT NULL,
+	Service_EndDate DATETIME NOT NULL,
+	servcode VARCHAR(10) NOT NULL,
+	revcode VARCHAR(10) NOT NULL,
+	billedunits MONEY NOT NULL,
+	Paid_Amount MONEY NOT NULL,
+	InEligible_Amount MONEY NOT NULL,
+	Billed_Amount MONEY NOT NULL,
+	ICDCode VARCHAR(10) NOT NULL,
+	CONSTRAINT PKclaimline PRIMARY KEY CLUSTERED 
 (
-	paymentid ASC,
-	captype ASC,
-	caprateid ASC,
-	captermid ASC,
-	capmonth ASC,
-	affiliationid ASC,
-	enrollid ASC,
-	fundid ASC,
-	paytoaffilid ASC,
-	networkid ASC,
-	recondate ASC,
-	factorvalueid ASC,
-	capadjustmentid ASC
-));
+	claimid, ClaimLineID ASC
+)
+);
+
+ALTER TABLE dbo.V_Claims_Line  WITH NOCHECK ADD  CONSTRAINT FK_CLAIMDETAIL_CLAIMID FOREIGN KEY(claimid)
+REFERENCES dbo.V_Claims_Header (claimid);
+
+CREATE TABLE dbo.V_Capitation_MemberDetails(
+	PaymentID VARCHAR(15) NOT NULL,
+	Capitation_Type VARCHAR(15) NOT NULL,
+	Enrollment_Id VARCHAR(15) NOT NULL,
+	Capitation_Date DATETIME NOT NULL,
+	Total_days INT NOT NULL,
+	Refund_Amount MONEY NOT NULL,
+	Provider_Id VARCHAR(15) NOT NULL,
+	CONSTRAINT PKCapitation PRIMARY KEY CLUSTERED 
+(
+	PaymentID, Enrollment_Id ASC
+)
+);
 
 
+ALTER TABLE dbo.V_Capitation_MemberDetails  WITH NOCHECK ADD  CONSTRAINT FK_Capitation_PaymentId FOREIGN KEY(PaymentID)
+REFERENCES dbo.V_Capitation_Payment_summary (PaymentID);
 
+CREATE TABLE dbo.V_Capitation_Payment_summary(
+	PaymentID VARCHAR(15) NOT NULL,
+	Program_Id VARCHAR(15) NOT NULL,
+	Provider_Id VARCHAR(15) NOT NULL,
+	Paid_Date DATETIME NULL,
+	Paid_Amount MONEY NOT NULL,
+	Provider_Name VARCHAR(100) NOT NULL,
+	Pay_Type VARCHAR(15) NOT NULL,
+	CONSTRAINT PKPaymentSummary PRIMARY KEY CLUSTERED 
+(
+	PaymentID ASC
+)
+);
+CREATE TABLE dbo.V_Claim_Edits(
+	ClaimID VARCHAR(15) NOT NULL,
+	ClaimLineID INT NOT NULL,
+	Edit_Code VARCHAR(15) NOT NULL,
+	Edit_Reason VARCHAR(100) NOT NULL,
+	Edit_Date DATETIME NOT NULL,
+	Edit_Status VARCHAR(10) NOT NULL,
+	CONSTRAINT PKCLaimEdit PRIMARY KEY CLUSTERED 
+(
+	claimid,ClaimLineID,Edit_Code ASC
+)
+);
+
+
+ALTER TABLE dbo.V_Claim_Edits  WITH NOCHECK ADD  CONSTRAINT FK_CLAIMEdit_CLAIMID FOREIGN KEY(claimid, ClaimLineID)
+REFERENCES dbo.V_Claims_Line (claimid, ClaimLineID);
+
+CREATE TABLE dbo.V_Members(
+	MemberId VARCHAR(15) NOT NULL,
+	Enrollment_Id VARCHAR(15) NOT NULL,
+	Enrollment_EffectiveDate DATETIME NOT NULL,
+	Enrollment_TermDate DATETIME NOT NULL,
+	Member_Name VARCHAR(100) NOT NULL,
+	Member_PlanId VARCHAR(15) NOT NULL,
+	Program_Id VARCHAR(15) NOT NULL,
+	Date_of_Birth datetime NULL,
+	Member_SSN VARCHAR(15) NOT NULL,
+	VIP_Flag VARCHAR(1) NOT NULL,
+	Family_ID VARCHAR(15) NOT NULL,
+	Gender VARCHAR(1) NOT NULL,
+	CONSTRAINT PKMember PRIMARY KEY CLUSTERED 
+(
+	MemberId, Enrollment_Id ASC
+)
+);
+
+CREATE TABLE dbo.V_provider(
+	ProviderId VARCHAR(15) NOT NULL,
+	ProviderFullName VARCHAR(100) NOT NULL,
+	ProviderType VARCHAR(15) NOT NULL,
+	SpecialtyCode VARCHAR(15) NOT NULL,
+	ProviderStatus VARCHAR(10) NOT NULL,
+	NPI VARCHAR(10) NULL,
+	FederalId VARCHAR(12) NOT NULL,
+	CreatedDate DATETIME NOT NULL,
+	CreatedByUserId VARCHAR(120) NOT NULL,
+	LastUpdate DATETIME NOT NULL
+	CONSTRAINT PKprovider PRIMARY KEY CLUSTERED 
+(
+	ProviderId ASC
+)
+);

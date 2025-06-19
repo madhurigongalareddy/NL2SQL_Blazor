@@ -5,6 +5,7 @@
 @inject ProductService ProductService
 @inject UserService UserService
 @inject AuthenticationService AuthService
+@inject IJSRuntime JS
 @inject QueryHistoryService QueryHistoryService
 @using System.Data
 @using NL2SQL_Blazor.Components.Models
@@ -127,7 +128,7 @@
 
 
 </style>
-
+<script src="downloadFile.js"></script>
 <table cellspacing="1" cellpadding="2" class="tablebody">
     <tr>
         <td colspan="2" class="heading">NLQuery Engine</td>
@@ -193,7 +194,7 @@
                                             }
                                             else
                                             {
-                                                <span>Execute SQL</span>
+                                                <span>Execute</span>
                                             }
                                         </button>
                                     </td>
@@ -216,6 +217,14 @@
                         {
                             @if (dtResult != null)
                             {
+                                
+                                @if (!string.IsNullOrEmpty(queryOutput) && !isLoading && dtResult != null && dtResult.Columns.Count > 0)
+                                {
+                                    <div style="text-align: right; margin-bottom: 5px;">
+                                        <a href="/nl-to-sql" @onclick:preventDefault="true" style="font-size: 15px; color: darkgreen; text-decoration: underline; cursor: pointer;" @onclick="ExportGridToText">Export Result</a>
+                                    </div>
+                                }
+
                                 <div class="result-table-container">
                                     <table class="result-table">
                                         <thead>
@@ -238,6 +247,7 @@
                                             }
                                         </tbody>
                                     </table>
+
                                 </div>
                             }
                         }
@@ -304,21 +314,71 @@
 </table>
 @code {
 
+    /// <summary>
+    /// Stores the user's natural language input.
+    /// </summary>
     private string userInput;
+
+    /// <summary>
+    /// Stores the result returned from the NLQueryEngine.
+    /// </summary>
     private string result;
+
+    /// <summary>
+    /// Stores the generated SQL query output.
+    /// </summary>
     private string queryOutput;
+
+    /// <summary>
+    /// Stores the array of SQL commands generated from the NLQueryEngine.
+    /// </summary>
     private string[] commands;
+
+    /// <summary>
+    /// Stores alternative SQL commands, if any.
+    /// </summary>
     private string alternativeCmd;
+
+    /// <summary>
+    /// Indicates if the query conversion is in progress.
+    /// </summary>
     private bool isLoading = false;
+
+    /// <summary>
+    /// Indicates if the SQL execution is in progress.
+    /// </summary>
     private bool isExecuting = false;
+
+    /// <summary>
+    /// Stores the result of the executed SQL query as a DataTable.
+    /// </summary>
     private DataTable dtResult;
 
+    /// <summary>
+    /// The index of the currently active tab (System Prompts or History).
+    /// </summary>
     private int activeTab = 0;
+
+    /// <summary>
+    /// The name of the selected database server.
+    /// </summary>
     private string dbserver { get; set; }
+
+    /// <summary>
+    /// The list of products available to the user.
+    /// </summary>
     private IEnumerable<Product> products;
+
+    /// <summary>
+    /// The currently selected product.
+    /// </summary>
     Product selectedProduct;
 
     private string _product;
+
+    /// <summary>
+    /// The name of the selected product. Setting this also updates the selectedProduct and dbserver.
+    /// </summary>
     private string product
     {
         get => _product;
@@ -333,6 +393,9 @@
         }
     }
 
+    /// <summary>
+    /// Initializes the component by loading the user's products and setting the default selection.
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         products = await UserService.GetProductsByUserIdAsync(AuthService.CurrentUserId);
@@ -343,6 +406,9 @@
         }
     }
 
+    /// <summary>
+    /// Converts the user's natural language input to a SQL query using the NLQueryEngine.
+    /// </summary>
     private async Task Convert()
     {
         isLoading = true;
@@ -368,6 +434,9 @@
         }
     }
 
+    /// <summary>
+    /// Executes the generated SQL query against the selected product's database.
+    /// </summary>
     private async Task ExecuteSql()
     {
         if (HasSqlInjectionPattern(queryOutput))
@@ -380,7 +449,7 @@
         isExecuting = true;
         try
         {
-            dtResult = await dbEngine.ExecuteQueryAsync(queryOutput);
+            dtResult = await dbEngine.ExecuteQueryAsync(queryOutput, selectedProduct.ProductName);
         }
         finally
         {
@@ -388,6 +457,11 @@
         }
     }
 
+    /// <summary>
+    /// Checks the provided SQL for common SQL injection patterns.
+    /// </summary>
+    /// <param name="sql">The SQL query to check.</param>
+    /// <returns>True if a potential SQL injection pattern is detected; otherwise, false.</returns>
     private bool HasSqlInjectionPattern(string sql)
     {
         if (string.IsNullOrWhiteSpace(sql))
@@ -434,10 +508,53 @@
         return false;
     }
 
+    /// <summary>
+    /// Exports the current query result DataTable to a CSV file and triggers a download in the browser.
+    /// </summary>
+    private async Task ExportGridToText()
+    {
+        if (dtResult == null || dtResult.Columns.Count == 0)
+            return;
+
+        var sb = new System.Text.StringBuilder();
+
+        // Header
+        for (int i = 0; i < dtResult.Columns.Count; i++)
+        {
+            sb.Append(dtResult.Columns[i].ColumnName);
+            if (i < dtResult.Columns.Count - 1)
+                sb.Append(',');
+        }
+        sb.AppendLine();
+
+        // Rows
+        foreach (DataRow row in dtResult.Rows)
+        {
+            for (int i = 0; i < dtResult.Columns.Count; i++)
+            {
+                var value = row[i]?.ToString()?.Replace("\t", " ") ?? "";
+                sb.Append(value);
+                if (i < dtResult.Columns.Count - 1)
+                    sb.Append(',');
+            }
+            sb.AppendLine();
+        }
+
+        var fileName = $"QueryResult_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+        var fileContent = sb.ToString();
+        var bytes = System.Text.Encoding.UTF8.GetBytes(fileContent);
+        var base64 = System.Convert.ToBase64String(bytes);
+
+        await JS.InvokeVoidAsync("downloadFileFromBase64", fileName, base64);
+    }
+
+    /// <summary>
+    /// List of example prompts for the user to select from.
+    /// </summary>
     private List<string> prompts = new List<string>()
     {
-        "Show me the total number of claims received in May 2025.",
-        "How much was paid for claims between January and March 2025?",
+        "Show me the total number of claims submitted in May 2025.",
+        "Fetch all claims where the status is 'Paid' and the PaidDate is between January 2025 and March 2025",
         "What is the denial rate for claims submitted this year?",
         "List top 5 providers by total paid amount this year.",
         "Show me top 10 members based on claims paid amount in 2025.",
@@ -449,8 +566,12 @@
         "show me the top 10 List of claimEdit status is Deny",
         "Show me the duplicate members with same SSN and Enrollment year but different Member ID",
         "Show me the top 10 providers with the highest number of capitation claims in the last 6 months",
-
     };
+
+    /// <summary>
+    /// Sets the active tab index.
+    /// </summary>
+    /// <param name="tabIndex">The index of the tab to activate.</param>
 
     private List<string> recentQueries = new();
 
@@ -463,6 +584,11 @@
             StateHasChanged();
         }
     }
+
+    /// <summary>
+    /// Sets the user's input to the selected prompt.
+    /// </summary>
+    /// <param name="prompt">The prompt to set as user input.</param>
     private void SetPrompt(string prompt)
     {
         userInput = prompt;

@@ -1,445 +1,129 @@
-CREATE TABLE claim (claimid INTEGER, referralid VARCHAR(30), enrollid INTEGER, startdate TIMESTAMP, 
-enddate TIMESTAMP, totalamt NUMERIC(18,2), status VARCHAR(20), planid INTEGER, paiddate TIMESTAMP);
+CREATE TABLE V_provider (
+    ProviderId            BIGINT         NOT NULL,
+    ProviderFullName      VARCHAR(200)   NOT NULL,
+    ProviderType          VARCHAR(20)    NOT NULL,
+    SpecialtyCode         BIGINT         NOT NULL,
+    ProviderStatus        VARCHAR(20)    NOT NULL,
+    NPI                   CHAR(10),
+    FederalId             CHAR(12)       NOT NULL,
+    CreatedDate           TIMESTAMP      NOT NULL,
+    CreatedByUserId       VARCHAR(50)    NOT NULL,
+    LastUpdate            TIMESTAMP      NOT NULL,
+    UpdatedByUserId       VARCHAR(50)    NOT NULL
+);
 
-CREATE TABLE claim837 (claimid INTEGER, billingprovname VARCHAR(50), billingprovidentifier CHAR(80));
+CREATE TABLE V_provideraction (
+    ActionId              BIGINT         NOT NULL,
+    ProviderId            BIGINT         NOT NULL,
+    CreatedDate           TIMESTAMP      NOT NULL,
+    CreatedByUserId       VARCHAR(50)    NOT NULL,
+    CompletedByUserId     BIGINT         NOT NULL,
+    CompletedDate         TIMESTAMP
+);
 
-CREATE TABLE Claim837Adjustment (ClaimId INTEGER, FrequencyCode CHAR(1), ReqType VARCHAR(10), Status VARCHAR(50));
+CREATE TABLE V_providerattribute (
+    ProviderId            BIGINT         NOT NULL,
+    AttributeId           BIGINT         NOT NULL,
+    AttributeValue        VARCHAR(60)    NOT NULL,
+    EffectiveDate         TIMESTAMP      NOT NULL,
+    TerminationDate       TIMESTAMP      NOT NULL
+);
 
-CREATE TABLE ClaimAdjustment (ClaimId INTEGER, Payer INTEGER, ClaimAdjustmentGroupCode VARCHAR(50), HipaaAdjReasonCodeId INTEGER, Amount NUMERIC(18,2));
+CREATE TABLE V_ProviderBedTypes (
+    ProviderId            BIGINT         NOT NULL,
+    BedTypeId             BIGINT         NOT NULL,
+    BedTypeDescription    VARCHAR(100)   NOT NULL,
+    BedCapacity           INTEGER        NOT NULL,
+    EffectiveDate         TIMESTAMP      NOT NULL,
+    TerminationDate       TIMESTAMP      NOT NULL
+);
 
-CREATE TABLE claimapc (claimid INTEGER, totalpaymentamt NUMERIC(18,2), paymentamt NUMERIC(18,2), deductibleamt NUMERIC(18,2), coinsuranceamt NUMERIC(18,2));
+CREATE TABLE V_providercos (
+    ProviderId            BIGINT         NOT NULL,
+    ProgramId             BIGINT         NOT NULL,
+    CosCode               VARCHAR(20)    NOT NULL,
+    EffectiveDate         TIMESTAMP      NOT NULL,
+    TerminationDate       TIMESTAMP      NOT NULL
+);
 
-CREATE TABLE claimattribute (claimid INTEGER, attributeid INTEGER, effdate TIMESTAMP, thevalue VARCHAR(60));
+CREATE TABLE V_providergroup (
+    ProviderId            BIGINT         NOT NULL,
+    CategoryId            BIGINT         NOT NULL,
+    SubCategoryId         BIGINT         NOT NULL,
+    ServiceGroupId        BIGINT         NOT NULL,
+    EffectiveDate         TIMESTAMP      NOT NULL,
+    TerminationDate       TIMESTAMP      NOT NULL,
+    IsIncludedService     BOOLEAN        NOT NULL
+);
 
-CREATE TABLE claimauthmatch (claimauthmatchid INTEGER, matchtype CHAR(1), matchid INTEGER, referralid INTEGER);
+CREATE TABLE V_providerissue (
+    ProviderId            BIGINT         NOT NULL,
+    IssueCodeId           BIGINT         NOT NULL,
+    ReferralId            BIGINT         NOT NULL,
+    ClaimId               BIGINT         NOT NULL,
+    CreatedDate           TIMESTAMP      NOT NULL
+);
 
-CREATE TABLE ClaimAutoAdjust (HistoryClaimId INTEGER, ClaimId INTEGER, ClaimHistoryType VARCHAR(50), Status VARCHAR(50));
+CREATE TABLE V_providermemo (
+    MemoId                BIGINT         NOT NULL,
+    ProviderId            BIGINT         NOT NULL,
+    MemoType              VARCHAR(20)    NOT NULL,
+    CreatedDate           TIMESTAMP      NOT NULL
+);
 
-CREATE TABLE ClaimAutoAdjust_Audit (HistoryClaimID INTEGER, ClaimID INTEGER, ClaimHistoryType VARCHAR(50), Status VARCHAR(50), ChangeType INTEGER, Time_Of_Change VARCHAR(50));
+CREATE TABLE V_ProviderRiskLevel (
+    ProviderId            BIGINT         NOT NULL,
+    RiskLevelId           BIGINT         NOT NULL,
+    RiskReasonId          BIGINT         NOT NULL,
+    EffectiveDate         TIMESTAMP      NOT NULL,
+    TerminationDate       TIMESTAMP      NOT NULL
+);
 
-CREATE TABLE claimbatch (batchid INTEGER, claimid INTEGER, sequence INTEGER, uniqueid CHAR(50));
+CREATE TABLE V_ProviderRiskReason (
+    RiskReasonId          BIGINT         NOT NULL,
+    RiskReasonDescription VARCHAR(100)   NOT NULL,
+    EffectiveDate         TIMESTAMP      NOT NULL,
+    TerminationDate       TIMESTAMP      NOT NULL
+);
 
-CREATE TABLE ClaimCarcDetail (ClaimCarcDetailId INTEGER, ClaimId INTEGER, ClaimLine INTEGER, RuleId INTEGER, CarcCode INTEGER);
+CREATE TABLE V_providerspecialty (
+    ProviderId            BIGINT         NOT NULL,
+    SpecialtyCode         BIGINT         NOT NULL,
+    SpecialtyType         VARCHAR(20)    NOT NULL,
+    SpecialtyStatus       VARCHAR(20)    NOT NULL,
+    EffectiveDate         TIMESTAMP      NOT NULL,
+    TerminationDate       TIMESTAMP      NOT NULL
+);
 
-CREATE TABLE claimcond (claimid INTEGER, condcode CHAR(2));
+CREATE TABLE V_ProviderStateCertification (
+    ProviderId            BIGINT         NOT NULL,
+    CertificateId         BIGINT         NOT NULL,
+    CertificateDescription VARCHAR(100)  NOT NULL,
+    StateId               CHAR(15)       NOT NULL,
+    EffectiveDate         TIMESTAMP      NOT NULL,
+    TerminationDate       TIMESTAMP      NOT NULL
+);
 
-CREATE TABLE claimdetail (claimid INTEGER, claimline INTEGER, referralid CHAR(30), revcode VARCHAR(50), planid INTEGER, total NUMERIC(18,2), dosfrom TIMESTAMP, dosto TIMESTAMP, status VARCHAR(50));
+CREATE TABLE V_providertaxid (
+    ProviderId            BIGINT         NOT NULL,
+    TaxId                 CHAR(12)       NOT NULL,
+    TaxIdType             VARCHAR(20),
+    LegalName             VARCHAR(95),
+    EffectiveDate         TIMESTAMP      NOT NULL,
+    TerminationDate       TIMESTAMP      NOT NULL
+);
 
-CREATE TABLE ClaimDetailAdjustment (ClaimId INTEGER, ClaimLine INTEGER, Payer INTEGER, ClaimAdjustmentGroupCode VARCHAR(50), HipaaAdjReasonCodeId INTEGER, Amount NUMERIC(18,2));
+CREATE TABLE V_providertaxonomy (
+    ProviderId            BIGINT         NOT NULL,
+    TaxonomyCode          CHAR(30)       NOT NULL,
+    EffectiveDate         TIMESTAMP      NOT NULL,
+    TerminationDate       TIMESTAMP      NOT NULL
+);
 
-CREATE TABLE claimdetailapc (claimid INTEGER, claimline INTEGER, paymentapc CHAR(5), hcpcsapc CHAR(5), totalpaymentamt NUMERIC(18,2), paymentamt NUMERIC(18,2), deductibleamt NUMERIC(18,2), coinsuranceamt NUMERIC(18,2));
-
-CREATE TABLE claimdetailcdh (claimid INTEGER, claimline INTEGER, hragrouporgpolicyid INTEGER, fsaeligible VARCHAR(50), hsaeligible VARCHAR(50), hraeligible VARCHAR(50));
-
-CREATE TABLE ClaimDetailEAPG (ClaimID INTEGER, ClaimLine INTEGER, FinalEAPG CHAR(5), PricingStatus CHAR(2));
-
-CREATE TABLE payment (paymentid INTEGER, memid INTEGER, programid INTEGER, provid INTEGER, paydiscount NUMERIC(18,2), advanceapplied NUMERIC(18,2), paydate TIMESTAMP, amountpaid NUMERIC(18,2), checkamt NUMERIC(18,2), checknbr CHAR(20), checkprintdate TIMESTAMP, checkprintby INTEGER, lastupdate VARCHAR(50), updateid VARCHAR(50), status VARCHAR(50), payee VARCHAR(100), accountnbr CHAR(30), benefitamt NUMERIC(18,2), negativeamt NUMERIC(18,2), billedamt NUMERIC(18,2), paytype VARCHAR(50), totalpool NUMERIC(18,2), createid VARCHAR(50), createdate TIMESTAMP, reimburseamt NUMERIC(18,2), totalrefundamt NUMERIC(18,2), claimmemid INTEGER, interestenddate TIMESTAMP, qframeprocesslogid INTEGER, qframeprocessdetailid INTEGER, lienpayment VARCHAR(10), capmessagequeueid INTEGER, capmessage TEXT, eligibleorgid INTEGER, ReassociationNbr CHAR(20));
-
-CREATE TABLE capvoucher (paymentid INTEGER, captype VARCHAR(50), caprateid INTEGER, captermid INTEGER, capmonth INTEGER, affiliationid INTEGER, enrollid INTEGER, fundid INTEGER, paytoaffilid INTEGER, capamount NUMERIC(18,2), daycount INTEGER, memcount INTEGER, capdate TIMESTAMP, updateid VARCHAR(50), lastupdate VARCHAR(50), createid VARCHAR(50), createdate TIMESTAMP, refundamt NUMERIC(18,2), networkid INTEGER, recondate TIMESTAMP, method INTEGER, factorvalueid INTEGER, funddetailid INTEGER, capadjustmentid INTEGER, CapFactorId INTEGER);
-
-CREATE TABLE claim (claimid INTEGER, referralid VARCHAR(30), enrollid INTEGER, startdate TIMESTAMP, 
-enddate TIMESTAMP, totalamt NUMERIC(18,2), status VARCHAR(20), planid INTEGER, paiddate TIMESTAMP);
-
-CREATE TABLE claim837 (claimid INTEGER, billingprovname VARCHAR(50), billingprovidentifier CHAR(80));
-
-CREATE TABLE Claim837Adjustment (ClaimId INTEGER, FrequencyCode CHAR(1), ReqType VARCHAR(10), Status VARCHAR(50));
-
-CREATE TABLE ClaimAdjustment (ClaimId INTEGER, Payer INTEGER, ClaimAdjustmentGroupCode VARCHAR(50), HipaaAdjReasonCodeId INTEGER, Amount NUMERIC(18,2));
-
-CREATE TABLE claimapc (claimid INTEGER, totalpaymentamt NUMERIC(18,2), paymentamt NUMERIC(18,2), deductibleamt NUMERIC(18,2), coinsuranceamt NUMERIC(18,2));
-
-CREATE TABLE claimattribute (claimid INTEGER, attributeid INTEGER, effdate TIMESTAMP, thevalue VARCHAR(60));
-
-CREATE TABLE claimauthmatch (claimauthmatchid INTEGER, matchtype CHAR(1), matchid INTEGER, referralid INTEGER);
-
-CREATE TABLE ClaimAutoAdjust (HistoryClaimId INTEGER, ClaimId INTEGER, ClaimHistoryType VARCHAR(50), Status VARCHAR(50));
-
-CREATE TABLE ClaimAutoAdjust_Audit (HistoryClaimID INTEGER, ClaimID INTEGER, ClaimHistoryType VARCHAR(50), Status VARCHAR(50), ChangeType INTEGER, Time_Of_Change VARCHAR(50));
-
-CREATE TABLE claimbatch (batchid INTEGER, claimid INTEGER, sequence INTEGER, uniqueid CHAR(50));
-
-CREATE TABLE ClaimCarcDetail (ClaimCarcDetailId INTEGER, ClaimId INTEGER, ClaimLine INTEGER, RuleId INTEGER, CarcCode INTEGER);
-
-CREATE TABLE claimcond (claimid INTEGER, condcode CHAR(2));
-
-CREATE TABLE claimdetail (claimid INTEGER, claimline INTEGER, referralid CHAR(30), revcode VARCHAR(50), planid INTEGER, total NUMERIC(18,2), dosfrom TIMESTAMP, dosto TIMESTAMP, status VARCHAR(50));
-
-CREATE TABLE ClaimDetailAdjustment (ClaimId INTEGER, ClaimLine INTEGER, Payer INTEGER, ClaimAdjustmentGroupCode VARCHAR(50), HipaaAdjReasonCodeId INTEGER, Amount NUMERIC(18,2));
-
-CREATE TABLE claimdetailapc (claimid INTEGER, claimline INTEGER, paymentapc CHAR(5), hcpcsapc CHAR(5), totalpaymentamt NUMERIC(18,2), paymentamt NUMERIC(18,2), deductibleamt NUMERIC(18,2), coinsuranceamt NUMERIC(18,2));
-
-CREATE TABLE claimdetailcdh (claimid INTEGER, claimline INTEGER, hragrouporgpolicyid INTEGER, fsaeligible VARCHAR(50), hsaeligible VARCHAR(50), hraeligible VARCHAR(50));
-
-CREATE TABLE ClaimDetailEAPG (ClaimID INTEGER, ClaimLine INTEGER, FinalEAPG CHAR(5), PricingStatus CHAR(2));
-
-CREATE TABLE payment (paymentid INTEGER, memid INTEGER, programid INTEGER, provid INTEGER, paydiscount NUMERIC(18,2), advanceapplied NUMERIC(18,2), paydate TIMESTAMP, amountpaid NUMERIC(18,2), checkamt NUMERIC(18,2), checknbr CHAR(20), checkprintdate TIMESTAMP, checkprintby INTEGER, lastupdate VARCHAR(50), updateid VARCHAR(50), status VARCHAR(50), payee VARCHAR(100), accountnbr CHAR(30), benefitamt NUMERIC(18,2), negativeamt NUMERIC(18,2), billedamt NUMERIC(18,2), paytype VARCHAR(50), totalpool NUMERIC(18,2), createid VARCHAR(50), createdate TIMESTAMP, reimburseamt NUMERIC(18,2), totalrefundamt NUMERIC(18,2), claimmemid INTEGER, interestenddate TIMESTAMP, qframeprocesslogid INTEGER, qframeprocessdetailid INTEGER, lienpayment VARCHAR(10), capmessagequeueid INTEGER, capmessage TEXT, eligibleorgid INTEGER, ReassociationNbr CHAR(20));
-
-CREATE TABLE capvoucher (paymentid INTEGER, captype VARCHAR(50), caprateid INTEGER, captermid INTEGER, capmonth INTEGER, affiliationid INTEGER, enrollid INTEGER, fundid INTEGER, paytoaffilid INTEGER, capamount NUMERIC(18,2), daycount INTEGER, memcount INTEGER, capdate TIMESTAMP, updateid VARCHAR(50), lastupdate VARCHAR(50), createid VARCHAR(50), createdate TIMESTAMP, refundamt NUMERIC(18,2), networkid INTEGER, recondate TIMESTAMP, method INTEGER, factorvalueid INTEGER, funddetailid INTEGER, capadjustmentid INTEGER, CapFactorId INTEGER);
-
-#region Provider
-CREATE TABLE provider(
-    provid dbo.ident NOT NULL,
-    entityid dbo.ident NOT NULL,
-    specialtycode dbo.ident NOT NULL,
-    provtype dbo.typecode NOT NULL,
-    fedid char(12) NOT NULL,
-    fullname dbo.udtlongfullname NOT NULL,
-    exthours dbo.zint NOT NULL,
-    profdesig dbo.ident NOT NULL,
-    status dbo.statustype NOT NULL,
-    ethnicid dbo.ident NOT NULL,
-    servlocation dbo.zint NOT NULL,
-    taxexempt dbo.yesnotype NOT NULL,
-    upin dbo.ident NOT NULL,
-    credentialstatus dbo.ident NOT NULL,
-    provwatch dbo.yesnotype NOT NULL,
-    createid dbo.udtuserid NOT NULL,
-    createdate dbo.createdatetype NOT NULL,
-    lastupdate dbo.lastupdatetype NOT NULL,
-    updateid dbo.udtuserid NOT NULL,
-    handicapaccess dbo.yesnotype NOT NULL,
-    sex char(1) NOT NULL,
-    dob datetime NULL,
-    npi char(10) NULL,
-    Ssn dbo.ident NULL,
-    ExternalId varchar(15) NULL,
-    NPIType char(1) NOT NULL,
-    Parking dbo.yesnotype NOT NULL,
-    CONSTRAINT PKprovider PRIMARY KEY CLUSTERED 
-    (
-    provid ASC
-    ));
-
-CREATE TABLE license(
-	provid dbo.ident NOT NULL,
-	licenseid dbo.ident NOT NULL,
-	effdate smalldatetime NOT NULL,
-	boardid dbo.ident NOT NULL,
-	termdate smalldatetime NOT NULL,
-	programdir dbo.nametype NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	verificationtypeid dbo.ident NOT NULL,
-	verificationduedate smalldatetime NULL,
-	verificationdate smalldatetime NULL,
-	description dbo.shortdesctype NOT NULL,
-	recordid int IDENTITY(1,1) NOT NULL,
-CONSTRAINT PKlicense PRIMARY KEY CLUSTERED 
-    (
-	provid ASC,
-	licenseid ASC,
-	effdate ASC
-    ));
-
-CREATE TABLE dbo.specialty(
-	specialtycode dbo.ident NOT NULL,
-	description dbo.shortdesctype NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-PRIMARY KEY CLUSTERED 
-(
-	specialtycode ASC
-));
-
-CREATE TABLE provspecialty(
-	provid dbo.ident NOT NULL,
-	specialtycode dbo.ident NOT NULL,
-	spectype dbo.typecode NOT NULL,
-	effdate smalldatetime NOT NULL,
-	termdate smalldatetime NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	specialtystatus dbo.typecode NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
- CONSTRAINT PKprovspecialty PRIMARY KEY CLUSTERED 
-(
-	provid ASC,
-	specialtycode ASC,
-	effdate ASC
-));
-
-CREATE TABLE dbo.StateCertification(
-	StateCertificationid dbo.ident NOT NULL,
-	certificationtype dbo.shortdesctype NOT NULL,
-	certifyingagency dbo.shortdesctype NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
- CONSTRAINT PKstateCertification PRIMARY KEY CLUSTERED 
-(
-	StateCertificationid ASC
-));
-
-CREATE TABLE ProviderStateCertification(
-	providerid dbo.ident NOT NULL,
-	certificateId dbo.ident NOT NULL,
-	description dbo.shortdesctype NOT NULL,
-	effdate smalldatetime NOT NULL,
-	termdate smalldatetime NOT NULL,
-	stateId char(15) NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	RecordId int IDENTITY(1,1) NOT NULL,
- CONSTRAINT pk_providerstatecertification PRIMARY KEY CLUSTERED 
-(
-	providerid ASC,
-	certificateId ASC,
-	effdate ASC
-));
-
-CREATE TABLE dbo.board(
-	boardid dbo.ident NOT NULL,
-	entityid dbo.ident NOT NULL,
-	specialtycode dbo.ident NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	fullname dbo.longname NOT NULL,
- CONSTRAINT PKboard PRIMARY KEY CLUSTERED 
-(
-	boardid ASC
-));
-
-CREATE TABLE certification(
-	provid dbo.ident NOT NULL,
-	specialtycode dbo.ident NOT NULL,
-	effdate smalldatetime NOT NULL,
-	termdate smalldatetime NOT NULL,
-	boardid dbo.ident NOT NULL,
-	certnumber dbo.ident NOT NULL,
-	certyear dbo.zint NOT NULL,
-	recertyear dbo.zint NOT NULL,
-	admissable dbo.zint NOT NULL,
-	admisdate smalldatetime NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	description dbo.shortdesctype NOT NULL,
-	RecordId int IDENTITY(1,1) NOT NULL,
- CONSTRAINT PKcertification PRIMARY KEY CLUSTERED 
-(
-	provid ASC,
-	specialtycode ASC,
-	effdate ASC,
-	boardid ASC
-));
-
-CREATE TABLE contract(
-	contractid dbo.ident NOT NULL,
-	drggroupid dbo.ident NOT NULL,
-	capid dbo.ident NOT NULL,
-	facilitycode char(1) NOT NULL,
-	description dbo.shortdesctype NOT NULL,
-	status dbo.statustype NOT NULL,
-	effdate smalldatetime NOT NULL,
-	termdate smalldatetime NOT NULL,
-	obs_contracttype dbo.typecode NOT NULL,
-	paytermid dbo.ident NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	contracted dbo.zint NOT NULL,
-	inpcostchgratio dbo.zmoney NOT NULL,
-	ffsriskpool dbo.ident NOT NULL,
-	riskcredit dbo.zmoney NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	capfundid dbo.ident NOT NULL,
-	ffsriskcredit dbo.zmoney NOT NULL,
-	ismodel dbo.yesnotype NOT NULL,
-	modelid dbo.ident NOT NULL,
-	restrictiongroupid dbo.ident NOT NULL,
-	isbasesupplemental dbo.yesnotype NOT NULL,
-	applydifferential dbo.yesnotype NOT NULL,
-	defffspercent dbo.zmoney NOT NULL,
-	disablemoddiscount dbo.yesnotype NOT NULL,
-	isrebill dbo.yesnotype NOT NULL,
-	rebillholdpayment dbo.yesnotype NOT NULL,
-	rebillwaitperiod dbo.zint NOT NULL,
-	splitcontractpricegroupid dbo.ident NULL,
-	usendcnotcpt dbo.yesnotype NOT NULL,
-	contractcategory dbo.ident NULL,
-	contracttype dbo.typecode NOT NULL,
-	AlternateId dbo.ident NULL,
- CONSTRAINT PKcontract PRIMARY KEY CLUSTERED 
-(
-	contractid ASC
-));
-
-CREATE TABLE contractinfo(
-	programid dbo.ident NOT NULL,
-	affiliationid dbo.ident NOT NULL,
-	effdate smalldatetime NOT NULL,
-	contractid dbo.ident NOT NULL,
-	termdate smalldatetime NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	atrisk dbo.zint NOT NULL,
-	feeid dbo.ident NOT NULL,
-	networkid dbo.ident NOT NULL,
-	isflatfee dbo.yesnotype NOT NULL,
-	flatfeeamount dbo.zmoney NOT NULL,
-	servicelocationid dbo.ident NOT NULL,
-	iscapitated dbo.ident NOT NULL,
-	contracted dbo.yesnotype NOT NULL,
-	applydifferential dbo.yesnotype NOT NULL,
-	requestrefund dbo.yesnotype NOT NULL,
-	networkpaypercent dbo.zmoney NOT NULL,
-	isrlgexcluded dbo.yesnotype NOT NULL,
-	copctermdate smalldatetime NULL,
-	IsPaymentBundle dbo.yesnotype NULL,
- CONSTRAINT PKcontractinfo PRIMARY KEY CLUSTERED 
-(
-	programid ASC,
-	affiliationid ASC,
-	effdate ASC,
-	networkid ASC,
-	servicelocationid ASC
-));
-
-CREATE TABLE contractterm(
-	contractid dbo.ident NOT NULL,
-	termid dbo.ident NOT NULL,
-	fundid dbo.ident NOT NULL,
-	effdate smalldatetime NOT NULL,
-	termdate smalldatetime NOT NULL,
-	description dbo.shortdesctype NOT NULL,
-	longdescription dbo.longdesctype NULL,
-	riskpoolid dbo.ident NOT NULL,
-	modelid dbo.ident NOT NULL,
-	modeltermid dbo.ident NOT NULL,
-	billclasscode char(1) NOT NULL,
-	facilitycode char(1) NOT NULL,
-	termtype dbo.typecode NOT NULL,
-	status dbo.statustype NOT NULL,
-	rvstable dbo.nametype NOT NULL,
-	amount dbo.zmoney NOT NULL,
-	rvsdiscount dbo.zmoney NOT NULL,
-	defffspercent dbo.zmoney NOT NULL,
-	chargeback dbo.zmoney NOT NULL,
-	dischargeamt dbo.zmoney NOT NULL,
-	agemin dbo.zint NOT NULL,
-	agemax dbo.zint NOT NULL,
-	capitated dbo.zint NOT NULL,
-	reqauth dbo.zint NOT NULL,
-	preauthlimit dbo.zmoney NOT NULL,
-	modcode dbo.modifiertype NOT NULL,
-	tier char(1) NOT NULL,
-	assignmemonly dbo.zint NOT NULL,
-	chgthreshhold dbo.zint NOT NULL,
-	hasdiag char(1) NOT NULL,
-	hasproc char(1) NOT NULL,
-	haslocation dbo.zint NOT NULL,
-	ismodel dbo.yesnotype NOT NULL,
-	provtype dbo.ident NOT NULL,
-	specialtycode dbo.ident NOT NULL,
-	manualreview dbo.yesnotype NOT NULL,
-	triagefee dbo.zmoney NOT NULL,
-	isepsdt dbo.yesnotype NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	typesrv char(2) NOT NULL,
-	hasdocuments dbo.yesnotype NOT NULL,
-	emergencyonly dbo.yesnotype NOT NULL,
-	atrisk dbo.yesnotype NOT NULL,
-	remitid dbo.ident NOT NULL,
-	eobid dbo.ident NOT NULL,
-	incentivepayment dbo.yesnotype NOT NULL,
-	isapc dbo.yesnotype NOT NULL,
-	ignorebilledcharges dbo.yesnotype NOT NULL,
-	usegpci dbo.yesnotype NOT NULL,
-	isregionfeebased dbo.yesnotype NOT NULL,
-	customfeeid dbo.ident NOT NULL,
-	usemicrodyndrg dbo.yesnotype NOT NULL,
-	maxreimbursement dbo.zmoney NOT NULL,
-	drggroupid dbo.ident NOT NULL,
-	applyoutlier dbo.yesnotype NOT NULL,
-	ndcpricesource dbo.ident NOT NULL,
-	ndcpricetype dbo.ident NOT NULL,
-	overrideroleid dbo.ident NOT NULL,
-	restrictiongrpid dbo.ident NOT NULL,
-	ignorecaserate dbo.yesnotype NOT NULL,
-	calclowoutlier dbo.yesnotype NOT NULL,
-	calctransferdrg dbo.yesnotype NOT NULL,
-	termreqauth dbo.yesnotype NOT NULL,
-	lossratio dbo.zmoney NOT NULL,
-	basesupplemental char(1) NOT NULL,
-	parstatus char(1) NOT NULL,
-	usemicrodyndrgpricer dbo.yesnotype NOT NULL,
-	usemicrodyndrggrouper dbo.yesnotype NOT NULL,
-	regionbasedamount dbo.yesnotype NOT NULL,
-	transferpricingmethod char(1) NOT NULL,
-	validatetransferprice dbo.yesnotype NOT NULL,
-	hasbilltype dbo.yesnotype NOT NULL,
-	outlierid dbo.ident NOT NULL,
-	isasccaserate dbo.yesnotype NOT NULL,
-	caserateperdos dbo.yesnotype NOT NULL,
-	itspricingmethod char(2) NULL,
-	itspricingrule char(6) NULL,
-	itssecpricingrule char(6) NULL,
-	isrebill dbo.yesnotype NOT NULL,
-	splitcontractpricedetpercent dbo.zmoney NOT NULL,
-	splitcontractpricequalpercent dbo.zmoney NOT NULL,
-	mdrpaypercent dbo.zmoney NOT NULL,
-	ndcdispensingfee dbo.zmoney NOT NULL,
-	isdefault dbo.yesnotype NOT NULL,
-	applynetworkpaypercent dbo.yesnotype NOT NULL,
-	ffsriskcredit dbo.zmoney NOT NULL,
-	ffsriskpoolid dbo.ident NOT NULL,
-	AdjustOpt char(1) NULL,
-	Use3MDRG dbo.yesnotype NOT NULL,
-	EnableEAPGPayPercent dbo.yesnotype NOT NULL,
-	crossoveramt dbo.zmoney NOT NULL,
-	IsMemberRegion dbo.yesnotype NOT NULL,
-	LengthofStayPerDiem dbo.zmoney NOT NULL,
-	DisableSNFVBP dbo.yesnotype NOT NULL,
-	LimitToCovDays dbo.yesnotype NOT NULL,
-	CalcVarPerDiemMethod char(1) NOT NULL,
-	modcode2 dbo.modifiertype NOT NULL,
-	modcode3 dbo.modifiertype NOT NULL,
-	modcode4 dbo.modifiertype NOT NULL,
-	CarveOutId dbo.ident NULL,
-	basedrgforoutlierandtransfer dbo.yesnotype NOT NULL,
-	paylessofdrgortransfer dbo.yesnotype NOT NULL,
-	applyhacreduction dbo.yesnotype NOT NULL,
-	paydayofdischarge dbo.yesnotype NOT NULL,
- CONSTRAINT PKcontractterm PRIMARY KEY CLUSTERED 
-(
-	contractid ASC,
-	termid ASC
-));
-
-CREATE TABLE dbo.affiliation(
-	affiliationid dbo.ident NOT NULL,
-	provid dbo.ident NOT NULL,
-	effdate smalldatetime NOT NULL,
-	termdate smalldatetime NOT NULL,
-	status dbo.statustype NOT NULL,
-	payflag dbo.zint NOT NULL,
-	affiltype dbo.typecode NOT NULL,
-	affiliateid dbo.ident NOT NULL,
-	pcp dbo.yesnotype NOT NULL,
-	hospaffiltype dbo.typecode NOT NULL,
-	createid dbo.udtuserid NOT NULL,
-	createdate dbo.createdatetype NOT NULL,
-	lastupdate dbo.lastupdatetype NOT NULL,
-	updateid dbo.udtuserid NOT NULL,
-	TeleHealth dbo.yesnotype NOT NULL,
- CONSTRAINT PKaffiliation PRIMARY KEY CLUSTERED 
-(
-	affiliationid ASC
-));
-#endregion
+CREATE TABLE V_providertype (
+    ProviderType              VARCHAR(20)    NOT NULL,
+    ProviderTypeDescription   VARCHAR(100)   NOT NULL,
+    ProviderClass             BIGINT         NOT NULL,
+    IsGroup                   BOOLEAN        NOT NULL,
+    IsActive                  BOOLEAN        NOT NULL
+);

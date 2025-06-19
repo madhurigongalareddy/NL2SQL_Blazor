@@ -5,43 +5,44 @@ using System.Data;
 
 public class DatabaseEngine
 {
-    private string _claimsConnString = "";
-    private string _referenceConnString = "";
+    private string _connString = "";
+    IConfiguration _configuration;    
 
     public DatabaseEngine(IConfiguration configuration)
-    {
-        _claimsConnString = configuration.GetConnectionString($"{DatabaseProduct.Claims}_ConnString")
-                           ?? throw new ArgumentNullException(nameof(configuration), $"Connection string {DatabaseProduct.Claims}_ConnString is null.");
-
-        _referenceConnString = configuration.GetConnectionString($"{DatabaseProduct.Reference}_ConnString")
-                           ?? throw new ArgumentNullException(nameof(configuration), $"Connection string {DatabaseProduct.Reference}_ConnString is null.");
+    { 
+        _configuration = configuration;
     }
 
-    public DatabaseProduct product { get; set; }
-
-    public enum DatabaseProduct
+    public async Task<DataTable> ExecuteQueryAsync(string sqlQuery, string productName)
     {
-        Claims,
-        Reference
-    }
-
-    public async Task<DataTable> ExecuteQueryAsync(string sqlQuery)
-    {
+        ProductService productService = new ProductService();
         try
         {
             if (string.IsNullOrWhiteSpace(sqlQuery))
             {
                 return new DataTable();
-            }           
-            using IDbConnection connection = product == DatabaseProduct.Claims ? new SqlConnection(_claimsConnString) : new NpgsqlConnection(_referenceConnString);
-            using IDbCommand command = connection.CreateCommand();
-            command.CommandText = sqlQuery;
+            }
 
-            var dataTable = new DataTable();
-            await ((dynamic)connection).OpenAsync();
-            using var reader = await ((dynamic)command).ExecuteReaderAsync();
-            dataTable.Load(reader);
-            return dataTable;
+            _connString = _configuration.GetConnectionString($"{productName}_ConnString")
+                           ?? throw new ArgumentNullException(nameof(_configuration), $"Connection string {productName}_ConnString is null.");
+
+            var products = await productService.GetProductsAsync();
+
+            IDbConnection connection = products.Where(p => p.ProductName == productName).FirstOrDefault().DBServerName == "MS-SQL"
+                ? new SqlConnection(_connString)
+                : new NpgsqlConnection(_connString);
+
+            using (connection)
+            using (IDbCommand command = connection.CreateCommand())
+            {
+                command.CommandText = sqlQuery;
+
+                var dataTable = new DataTable();
+                await ((dynamic)connection).OpenAsync();
+                using var reader = await ((dynamic)command).ExecuteReaderAsync();
+                dataTable.Load(reader);
+                return dataTable;
+            }
         }
         catch (Exception ex)
         {
@@ -50,5 +51,6 @@ public class DatabaseEngine
             return new DataTable();
         }
     }
+
 }
 
