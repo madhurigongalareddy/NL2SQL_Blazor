@@ -301,21 +301,71 @@
 </table>
 @code {
 
+    /// <summary>
+    /// Stores the user's natural language input.
+    /// </summary>
     private string userInput;
+
+    /// <summary>
+    /// Stores the result returned from the NLQueryEngine.
+    /// </summary>
     private string result;
+
+    /// <summary>
+    /// Stores the generated SQL query output.
+    /// </summary>
     private string queryOutput;
+
+    /// <summary>
+    /// Stores the array of SQL commands generated from the NLQueryEngine.
+    /// </summary>
     private string[] commands;
+
+    /// <summary>
+    /// Stores alternative SQL commands, if any.
+    /// </summary>
     private string alternativeCmd;
+
+    /// <summary>
+    /// Indicates if the query conversion is in progress.
+    /// </summary>
     private bool isLoading = false;
+
+    /// <summary>
+    /// Indicates if the SQL execution is in progress.
+    /// </summary>
     private bool isExecuting = false;
+
+    /// <summary>
+    /// Stores the result of the executed SQL query as a DataTable.
+    /// </summary>
     private DataTable dtResult;
 
+    /// <summary>
+    /// The index of the currently active tab (System Prompts or History).
+    /// </summary>
     private int activeTab = 0;
+
+    /// <summary>
+    /// The name of the selected database server.
+    /// </summary>
     private string dbserver { get; set; }
+
+    /// <summary>
+    /// The list of products available to the user.
+    /// </summary>
     private IEnumerable<Product> products;
+
+    /// <summary>
+    /// The currently selected product.
+    /// </summary>
     Product selectedProduct;
 
     private string _product;
+
+    /// <summary>
+    /// The name of the selected product. Setting this also updates the selectedProduct and dbserver.
+    /// </summary>
     private string product
     {
         get => _product;
@@ -330,6 +380,9 @@
         }
     }
 
+    /// <summary>
+    /// Initializes the component by loading the user's products and setting the default selection.
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         products = await UserService.GetProductsByUserIdAsync(AuthService.CurrentUserId);
@@ -340,6 +393,9 @@
         }
     }
 
+    /// <summary>
+    /// Converts the user's natural language input to a SQL query using the NLQueryEngine.
+    /// </summary>
     private async Task Convert()
     {
         isLoading = true;
@@ -364,6 +420,9 @@
         }
     }
 
+    /// <summary>
+    /// Executes the generated SQL query against the selected product's database.
+    /// </summary>
     private async Task ExecuteSql()
     {
         if (HasSqlInjectionPattern(queryOutput))
@@ -384,6 +443,11 @@
         }
     }
 
+    /// <summary>
+    /// Checks the provided SQL for common SQL injection patterns.
+    /// </summary>
+    /// <param name="sql">The SQL query to check.</param>
+    /// <returns>True if a potential SQL injection pattern is detected; otherwise, false.</returns>
     private bool HasSqlInjectionPattern(string sql)
     {
         if (string.IsNullOrWhiteSpace(sql))
@@ -430,6 +494,9 @@
         return false;
     }
 
+    /// <summary>
+    /// Exports the current query result DataTable to a CSV file and triggers a download in the browser.
+    /// </summary>
     private async Task ExportGridToText()
     {
         if (dtResult == null || dtResult.Columns.Count == 0)
@@ -467,7 +534,9 @@
         await JS.InvokeVoidAsync("downloadFileFromBase64", fileName, base64);
     }
 
-
+    /// <summary>
+    /// List of example prompts for the user to select from.
+    /// </summary>
     private List<string> prompts = new List<string>()
     {
         "Show me the total number of claims submitted in May 2025.",
@@ -484,10 +553,20 @@
         "Show me the duplicate members with same SSN and Enrollment year but different Member ID",
         "Show me the top 10 providers with the highest number of capitation claims in the last 6 months",
     };
+
+    /// <summary>
+    /// Sets the active tab index.
+    /// </summary>
+    /// <param name="tabIndex">The index of the tab to activate.</param>
     private void SetTab(int tabIndex)
     {
         activeTab = tabIndex;
     }
+
+    /// <summary>
+    /// Sets the user's input to the selected prompt.
+    /// </summary>
+    /// <param name="prompt">The prompt to set as user input.</param>
     private void SetPrompt(string prompt)
     {
         userInput = prompt;

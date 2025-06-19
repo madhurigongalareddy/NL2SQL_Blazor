@@ -8,6 +8,11 @@ public class NLQueryEngine
     private readonly HttpClient _httpClient;
     private readonly string _connectionString = "";
     private readonly string _apiUrl;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NLQueryEngine"/> class.
+    /// </summary>
+    /// <param name="httpClient">The HTTP client used for API requests.</param>
+    /// <param name="configuration">The application configuration for retrieving API URLs.</param>
     public NLQueryEngine(HttpClient httpClient, IConfiguration configuration)
     {
         _httpClient = httpClient;
@@ -15,6 +20,15 @@ public class NLQueryEngine
         _apiUrl = configuration["Ollama:NlToQueryApiUrl"] ?? throw new ArgumentNullException(nameof(configuration), "API URL 'NlToQueryApiUrl' is null.");
     }
 
+    /// <summary>
+    /// Converts a natural language query into a SQL query using an external API and the provided product schema.
+    /// </summary>
+    /// <param name="naturalLanguage">The natural language query to convert.</param>
+    /// <param name="product">The product containing database server and schema information.</param>
+    /// <returns>
+    /// A <see cref="Task{TResult}"/> representing the asynchronous operation, with the generated SQL query as a string.
+    /// Returns an error message if the conversion fails.
+    /// </returns>
     public async Task<string> ConvertToQueryAsync(string naturalLanguage, Product product)
     {
         try
@@ -61,7 +75,18 @@ public class NLQueryEngine
             return $"Error: {ex.Message}";
         }
     }
-
+   
+    /// <summary>
+    /// Extracts and formats SQL queries from the provided content string.
+    /// Cleans up the input by removing unnecessary whitespace, code block markers, and the word 'sql'.
+    /// Splits the content by semicolons, trims each command, ensures each command ends with a semicolon,
+    /// and joins the commands with newlines for readability.
+    /// </summary>
+    /// <param name="content">The raw content string potentially containing SQL queries.</param>
+    /// <returns>
+    /// A formatted string containing one or more SQL queries, each ending with a semicolon and separated by newlines.
+    /// Returns an empty string if the input is null, empty, or contains only whitespace.
+    /// </returns>
     private static string ExtractQuery(string content)
     {
         if (string.IsNullOrWhiteSpace(content))
@@ -83,6 +108,22 @@ public class NLQueryEngine
         // Join commands with a newline for readability
         return string.Join("\n", commands);
     }
+    /// <summary>
+    /// Generates a system prompt for the natural language to SQL conversion engine,
+    /// tailored to the specified database server and product schema.
+    /// </summary>
+    /// <param name="dbServerName">
+    /// The name of the database server (e.g., "PostgreSQL" or "SQLServer").
+    /// </param>
+    /// <param name="productname">
+    /// The name of the product, used to locate the corresponding schema file.
+    /// </param>
+    /// <returns>
+    /// A string containing the system prompt, including database-specific instructions and the schema content.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown if <paramref name="dbServerName"/> or <paramref name="productname"/> is null or empty.
+    /// </exception>
     private string GetSystemPrompt(string dbServerName, string productname)
     {
         if (string.IsNullOrWhiteSpace(dbServerName) || string.IsNullOrWhiteSpace(productname))
@@ -122,16 +163,34 @@ public class NLQueryEngine
         
       
     }
+    /// <summary>
+    /// Represents the response from the OpenAI API containing the generated message and model information.
+    /// </summary>
     private class OpenAiResponse
     {
+        /// <summary>
+        /// Gets or sets the message returned by the API.
+        /// </summary>
         public message Message { get; set; }
-        public string Model { get; set; }
 
+        /// <summary>
+        /// Gets or sets the model used to generate the response.
+        /// </summary>
+        public string Model { get; set; }
     }
+    /// <summary>
+    /// Represents a message object with role and content, as returned by the OpenAI API.
+    /// </summary>
     private class message
     {
+        /// <summary>
+        /// Gets or sets the role of the message sender (e.g., "system" or "user").
+        /// </summary>
         public string role { get; set; }
 
+        /// <summary>
+        /// Gets or sets the content of the message.
+        /// </summary>
         public string content { get; set; }
     }
 }

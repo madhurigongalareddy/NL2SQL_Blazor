@@ -105,33 +105,73 @@ else
 }
 
 @code {
+    /// <summary>
+    /// List of users loaded from the UserService.
+    /// </summary>
     private List<NL2SQL_Blazor.Components.Models.User> users;
+
+    /// <summary>
+    /// List of available product names for user assignment.
+    /// </summary>
     private readonly List<string> productName = new() { "Claims", "Provider", "Member" };
+
+    /// <summary>
+    /// The UserId of the user currently being edited, or null if none.
+    /// </summary>
     private int? editingUserId = null;
+
+    /// <summary>
+    /// The selected product name for the user being edited.
+    /// </summary>
     private string selectedProductName;
 
+    /// <summary>
+    /// List of products loaded from the ProductService.
+    /// </summary>
     private List<NL2SQL_Blazor.Components.Models.Product> products;
+
+    /// <summary>
+    /// The Id of the product currently being edited, or null if none.
+    /// </summary>
     private int? editingProductId = null;
+
+    /// <summary>
+    /// The version value being edited for a product.
+    /// </summary>
     private string editedVersion;
 
+    /// <summary>
+    /// Loads users and products from their respective services when the component is initialized.
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         users = await UserService.GetUsersAsync();
         products = await ProductService.GetProductsAsync();
     }
 
+    /// <summary>
+    /// Begins editing the role (product name) for the specified user.
+    /// </summary>
+    /// <param name="user">The user to edit.</param>
     private void EditRole(NL2SQL_Blazor.Components.Models.User user)
     {
         editingUserId = user.UserId;
         selectedProductName = user.ProductName;
     }
 
+    /// <summary>
+    /// Cancels editing the user's role.
+    /// </summary>
     private void CancelEdit()
     {
         editingUserId = null;
         selectedProductName = null;
     }
 
+    /// <summary>
+    /// Saves the updated role (product name) for the specified user.
+    /// </summary>
+    /// <param name="user">The user whose role is being updated.</param>
     private async Task SaveRole(NL2SQL_Blazor.Components.Models.User user)
     {
         user.ProductName = selectedProductName;
@@ -140,18 +180,29 @@ else
         await UserService.UpdateUserRoleAsync(user.UserId, user.ProductName);
     }
 
+    /// <summary>
+    /// Begins editing the version for the specified product.
+    /// </summary>
+    /// <param name="product">The product to edit.</param>
     private void EditProduct(NL2SQL_Blazor.Components.Models.Product product)
     {
         editingProductId = product.Id;
         editedVersion = product.Version;
     }
 
+    /// <summary>
+    /// Cancels editing the product's version.
+    /// </summary>
     private void CancelProductEdit()
     {
         editingProductId = null;
         editedVersion = null;
     }
 
+    /// <summary>
+    /// Saves the updated version for the specified product.
+    /// </summary>
+    /// <param name="product">The product whose version is being updated.</param>
     private async Task SaveProduct(NL2SQL_Blazor.Components.Models.Product product)
     {
         product.Version = editedVersion;
