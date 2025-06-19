@@ -3,7 +3,7 @@ using static DatabaseEngine;
 
 public class ProductService
 {
-    private readonly List<Product> _products = new()
+    public readonly List<Product> _products = new()
        {
            new Product { Id = 1, ProductName = "Claims", DBServerName = "MS-SQL", Version = "2019" },
            new Product { Id = 2, ProductName = "Provider", DBServerName = "PostgreSQL", Version = "2024" },
