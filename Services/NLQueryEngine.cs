@@ -102,8 +102,7 @@ public class NLQueryEngine
             $"\n - NEVER use SUBSTR, LEFT, RIGHT, or any string manipulation functions to extract date parts from date columns. Use EXTRACT or date_trunc for date parts if needed.\n" +
             $" - All date fields are stored as DATE or TIMESTAMP. You can directly compare date fields without conversions.\n - Always filter dates before aggregation whenever possible to improve query performance.\n " +
             $"### Database Schema:\n **{sqlSchema.Result}\n ### Output Format:\n Only output valid PostgreSQL code. Do not explain the query.Do not guess columns or tables if not in the " +
-            $"provided schema. Do not add comments. Do not include any" +
-            $" markdown formatting. Be aware the sql injection check mentioned in method Nl-to_sql.HasSqlInjectionPattern";
+            $"provided schema. Do not add comments. Do not include any markdown formatting. Be aware the sql injection check mentioned in method Nl-to_sql.HasSqlInjectionPattern";
         }
         else// if (dbServerName.Equals("SQLServer", StringComparison.OrdinalIgnoreCase))
         {
@@ -116,8 +115,7 @@ public class NLQueryEngine
            $"\n - NEVER use SUBSTR, SUBSTRING, LEFT, RIGHT,STRFTIME, or any string manipulation functions to extract date parts.\n - All date fields are stored as DATE or DATETIME." +
            $" You can directly compare date fields without conversions.\n - Always filter dates before aggregation whenever possible to improve query performance.\n " +
            $"### Database Schema:\n **{sqlSchema.Result}\n ### Output Format:\n Only output valid T-SQL code. Do not explain the query.Do not guess columns or tables if not in the provided schema." +
-           $" Do not add comments. Do not include any" +
-           $" markdown formatting. Be aware the sql injection check mentioned in method Nl-to_sql.HasSqlInjectionPattern";
+           $" Do not add comments. Do not include any markdown formatting. Be aware the sql injection check mentioned in method Nl-to_sql.HasSqlInjectionPattern";
         } 
         
       
