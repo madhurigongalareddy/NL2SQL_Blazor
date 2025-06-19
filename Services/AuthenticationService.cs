@@ -47,9 +47,12 @@ public class AuthenticationService
         }
     }
 
-    public void Logout()
+    public Task LogoutAsync()
     {
+        // Clear user details
         CurrentUsername = null;
+        CurrentUserRole = "";
         CurrentUserId = 0;
+        return Task.CompletedTask;
     }
 }
