@@ -13,7 +13,8 @@ builder.Services.AddScoped<DatabaseEngine>(sp => new DatabaseEngine(sp.GetRequir
 builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProductService>();
-
+builder.Services.AddSingleton<QueryHistoryService>();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -33,4 +34,4 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-app.Run();
+app.Run(); 

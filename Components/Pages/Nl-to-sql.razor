@@ -6,6 +6,7 @@
 @inject UserService UserService
 @inject AuthenticationService AuthService
 @inject IJSRuntime JS
+@inject QueryHistoryService QueryHistoryService
 @using System.Data
 @using NL2SQL_Blazor.Components.Models
 
@@ -283,11 +284,23 @@
                                         </div>
                                     </div>
                                 }
-                                else if (activeTab == 1)
+                                @if (activeTab == 1)
                                 {
                                     <div class="tab-pane fade show active" id="custom" role="tabpanel">
                                         <div style="height: 400px; overflow-y: auto; font-size: 13px; line-height: 1.2;">
-                                            <p>No history yet.</p>
+                                            @if (recentQueries.Count == 0)
+                                            {
+                                                <p>No history yet.</p>
+                                            }
+                                            else
+                                            {
+                                                <ul>
+                                                    @foreach (var query in recentQueries)
+                                                    {
+                                                        <li>@query</li>
+                                                    }
+                                                </ul>
+                                            }
                                         </div>
                                     </div>
                                 }
@@ -411,6 +424,7 @@
                 return;
             }
             queryOutput = commands[0].Trim(); // Take only the first SQL statement
+            await QueryHistoryService.AddAsync(userInput, AuthService.CurrentUsername);
             if(commands.Length > 1)
                 alternativeCmd = string.Join("; ", commands.Skip(1)).Trim(); // Join remaining commands as alternatives
         }
@@ -558,9 +572,17 @@
     /// Sets the active tab index.
     /// </summary>
     /// <param name="tabIndex">The index of the tab to activate.</param>
-    private void SetTab(int tabIndex)
+
+    private List<string> recentQueries = new();
+
+    private async void SetTab(int tabIndex)
     {
         activeTab = tabIndex;
+        if (tabIndex == 1)
+        {
+            recentQueries = await QueryHistoryService.GetRecentQueriesForCurrentUserAsync(AuthService.CurrentUsername);
+            StateHasChanged();
+        }
     }
 
     /// <summary>
@@ -571,5 +593,4 @@
     {
         userInput = prompt;
     }
-
 }
