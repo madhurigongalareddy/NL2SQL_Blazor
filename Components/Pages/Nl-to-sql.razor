@@ -193,7 +193,7 @@
                                             }
                                             else
                                             {
-                                                <span>Execute SQL</span>
+                                                <span>Execute</span>
                                             }
                                         </button>
                                     </td>
@@ -376,7 +376,7 @@
         isExecuting = true;
         try
         {
-            dtResult = await dbEngine.ExecuteQueryAsync(queryOutput);
+            dtResult = await dbEngine.ExecuteQueryAsync(queryOutput, selectedProduct.ProductName);
         }
         finally
         {
@@ -470,8 +470,8 @@
 
     private List<string> prompts = new List<string>()
     {
-        "Show me the total number of claims received in May 2025.",
-        "How much was paid for claims between January and March 2025?",
+        "Show me the total number of claims submitted in May 2025.",
+        "Fetch all claims where the status is 'Paid' and the PaidDate is between January 2025 and March 2025",
         "What is the denial rate for claims submitted this year?",
         "List top 5 providers by total paid amount this year.",
         "Show me top 10 members based on claims paid amount in 2025.",
@@ -483,7 +483,6 @@
         "show me the top 10 List of claimEdit status is Deny",
         "Show me the duplicate members with same SSN and Enrollment year but different Member ID",
         "Show me the top 10 providers with the highest number of capitation claims in the last 6 months",
-
     };
     private void SetTab(int tabIndex)
     {
