@@ -196,7 +196,6 @@
                                                 <span>Execute SQL</span>
                                             }
                                         </button>
-                                        <button class="mt-2 btn btn-primary" @onclick="ExportGridToText" style="float:right;">Export</button>
                                     </td>
                                 </tr>
                                 @if (!string.IsNullOrEmpty(alternativeCmd))
@@ -217,6 +216,14 @@
                         {
                             @if (dtResult != null)
                             {
+                                
+                                @if (!string.IsNullOrEmpty(queryOutput) && !isLoading && dtResult != null && dtResult.Columns.Count > 0)
+                                {
+                                    <div style="text-align: right; margin-bottom: 5px;">
+                                        <a href="/nl-to-sql" @onclick:preventDefault="true" style="font-size: 15px; color: darkgreen; text-decoration: underline; cursor: pointer;" @onclick="ExportGridToText">Export Result</a>
+                                    </div>
+                                }
+
                                 <div class="result-table-container">
                                     <table class="result-table">
                                         <thead>
@@ -239,7 +246,7 @@
                                             }
                                         </tbody>
                                     </table>
-                                 
+
                                 </div>
                             }
                         }
