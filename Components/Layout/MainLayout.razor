@@ -30,11 +30,11 @@
         bottom: 0;
         width: 100%;
         background: rgb(52,12,76);
-        color: #ff9800;
-        font-family: 'Segoe UI', 'Arial', sans-serif;
+        color: #fff;
+        font-family: Arial;
         text-align: center;
-        font-size: 1.1rem;
-        font-weight: 800;
+        font-size: 0.8rem;
+        font-weight: 550;
         letter-spacing: 1.2px;
         padding: 10px 0 8px 0;
         z-index: 100;
@@ -44,7 +44,7 @@
 
     .team-name {
         color: white;
-        font-weight: 800;
+        font-weight: 550;
         margin-left: 4px;
     }
 
@@ -72,7 +72,7 @@
         color: #0d6efd;
         cursor: pointer;
         text-decoration: none;
-        font-weight: 500;
+        font-size: 15px;
     }
 
     .profile-panel .logout-link:hover {
@@ -89,16 +89,9 @@
     <main>
         <div class="top-row px-4">
             <a class="navbar-brand" href="">You ask, we write. Let your data speak!</a>
-            <button class="btn btn-link p-0" style="text-decoration:none;" @onclick="ToggleProfilePanel" title="Profile">
-                <span class="bi bi-person-circle" style="font-size:2rem; color:#0d6efd;"></span>
-            </button>
-            @if (showProfilePanel)
-            {
-                <div class="profile-panel" @onclick:stopPropagation>
-                    <span class="username">@AuthService.CurrentUsername</span>
-                    <a class="logout-link" @onclick="Logout">Logout</a>
-                </div>
-            }
+            <a href="#" class="logout-link" title="Logout" @onclick="Logout" @onclick:preventDefault="true">
+                <img src="/logoutblue.png" style="height:40px"/>
+            </a>
         </div>
 
         <article class="content px-4">
@@ -119,9 +112,6 @@
 @code {
     [Inject] private AuthenticationService AuthService { get; set; }
     [Inject] private NavigationManager Navigation { get; set; }
-
-    private bool showProfilePanel = false;
-    private void ToggleProfilePanel() => showProfilePanel = !showProfilePanel;
 
     private async Task Logout()
     {
