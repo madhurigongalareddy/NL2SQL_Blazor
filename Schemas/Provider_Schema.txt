@@ -1,5 +1,5 @@
 CREATE TABLE V_provider (
-    ProviderId            BIGINT         NOT NULL,
+    ProviderId            BIGINT         NOT NULL PRIMARY KEY,
     ProviderFullName      VARCHAR(200)   NOT NULL,
     ProviderType          VARCHAR(20)    NOT NULL,
     SpecialtyCode         BIGINT         NOT NULL,
@@ -13,12 +13,13 @@ CREATE TABLE V_provider (
 );
 
 CREATE TABLE V_provideraction (
-    ActionId              BIGINT         NOT NULL,
+    ActionId              BIGINT         NOT NULL PRIMARY KEY,
     ProviderId            BIGINT         NOT NULL,
     CreatedDate           TIMESTAMP      NOT NULL,
     CreatedByUserId       VARCHAR(50)    NOT NULL,
     CompletedByUserId     BIGINT         NOT NULL,
-    CompletedDate         TIMESTAMP
+    CompletedDate         TIMESTAMP,
+    FOREIGN KEY (ProviderId) REFERENCES V_provider(ProviderId)
 );
 
 CREATE TABLE V_providerattribute (
@@ -26,7 +27,9 @@ CREATE TABLE V_providerattribute (
     AttributeId           BIGINT         NOT NULL,
     AttributeValue        VARCHAR(60)    NOT NULL,
     EffectiveDate         TIMESTAMP      NOT NULL,
-    TerminationDate       TIMESTAMP      NOT NULL
+    TerminationDate       TIMESTAMP      NOT NULL,
+    PRIMARY KEY (ProviderId, AttributeId),
+    FOREIGN KEY (ProviderId) REFERENCES V_provider(ProviderId)
 );
 
 CREATE TABLE V_ProviderBedTypes (
@@ -35,7 +38,9 @@ CREATE TABLE V_ProviderBedTypes (
     BedTypeDescription    VARCHAR(100)   NOT NULL,
     BedCapacity           INTEGER        NOT NULL,
     EffectiveDate         TIMESTAMP      NOT NULL,
-    TerminationDate       TIMESTAMP      NOT NULL
+    TerminationDate       TIMESTAMP      NOT NULL,
+    PRIMARY KEY (ProviderId, BedTypeId),
+    FOREIGN KEY (ProviderId) REFERENCES V_provider(ProviderId)
 );
 
 CREATE TABLE V_providercos (
@@ -43,7 +48,9 @@ CREATE TABLE V_providercos (
     ProgramId             BIGINT         NOT NULL,
     CosCode               VARCHAR(20)    NOT NULL,
     EffectiveDate         TIMESTAMP      NOT NULL,
-    TerminationDate       TIMESTAMP      NOT NULL
+    TerminationDate       TIMESTAMP      NOT NULL,
+    PRIMARY KEY (ProviderId, ProgramId, CosCode),
+    FOREIGN KEY (ProviderId) REFERENCES V_provider(ProviderId)
 );
 
 CREATE TABLE V_providergroup (
@@ -53,7 +60,9 @@ CREATE TABLE V_providergroup (
     ServiceGroupId        BIGINT         NOT NULL,
     EffectiveDate         TIMESTAMP      NOT NULL,
     TerminationDate       TIMESTAMP      NOT NULL,
-    IsIncludedService     BOOLEAN        NOT NULL
+    IsIncludedService     BOOLEAN        NOT NULL,
+    PRIMARY KEY (ProviderId, CategoryId, SubCategoryId, ServiceGroupId),
+    FOREIGN KEY (ProviderId) REFERENCES V_provider(ProviderId)
 );
 
 CREATE TABLE V_providerissue (
@@ -61,14 +70,17 @@ CREATE TABLE V_providerissue (
     IssueCodeId           BIGINT         NOT NULL,
     ReferralId            BIGINT         NOT NULL,
     ClaimId               BIGINT         NOT NULL,
-    CreatedDate           TIMESTAMP      NOT NULL
+    CreatedDate           TIMESTAMP      NOT NULL,
+    PRIMARY KEY (ProviderId, IssueCodeId, ReferralId, ClaimId),
+    FOREIGN KEY (ProviderId) REFERENCES V_provider(ProviderId)
 );
 
 CREATE TABLE V_providermemo (
-    MemoId                BIGINT         NOT NULL,
+    MemoId                BIGINT         NOT NULL PRIMARY KEY,
     ProviderId            BIGINT         NOT NULL,
     MemoType              VARCHAR(20)    NOT NULL,
-    CreatedDate           TIMESTAMP      NOT NULL
+    CreatedDate           TIMESTAMP      NOT NULL,
+    FOREIGN KEY (ProviderId) REFERENCES V_provider(ProviderId)
 );
 
 CREATE TABLE V_ProviderRiskLevel (
@@ -76,11 +88,14 @@ CREATE TABLE V_ProviderRiskLevel (
     RiskLevelId           BIGINT         NOT NULL,
     RiskReasonId          BIGINT         NOT NULL,
     EffectiveDate         TIMESTAMP      NOT NULL,
-    TerminationDate       TIMESTAMP      NOT NULL
+    TerminationDate       TIMESTAMP      NOT NULL,
+    PRIMARY KEY (ProviderId, RiskLevelId, RiskReasonId),
+    FOREIGN KEY (ProviderId) REFERENCES V_provider(ProviderId),
+    FOREIGN KEY (RiskReasonId) REFERENCES V_ProviderRiskReason(RiskReasonId)
 );
 
 CREATE TABLE V_ProviderRiskReason (
-    RiskReasonId          BIGINT         NOT NULL,
+    RiskReasonId          BIGINT         NOT NULL PRIMARY KEY,
     RiskReasonDescription VARCHAR(100)   NOT NULL,
     EffectiveDate         TIMESTAMP      NOT NULL,
     TerminationDate       TIMESTAMP      NOT NULL
@@ -92,7 +107,9 @@ CREATE TABLE V_providerspecialty (
     SpecialtyType         VARCHAR(20)    NOT NULL,
     SpecialtyStatus       VARCHAR(20)    NOT NULL,
     EffectiveDate         TIMESTAMP      NOT NULL,
-    TerminationDate       TIMESTAMP      NOT NULL
+    TerminationDate       TIMESTAMP      NOT NULL,
+    PRIMARY KEY (ProviderId, SpecialtyCode),
+    FOREIGN KEY (ProviderId) REFERENCES V_provider(ProviderId)
 );
 
 CREATE TABLE V_ProviderStateCertification (
@@ -101,7 +118,9 @@ CREATE TABLE V_ProviderStateCertification (
     CertificateDescription VARCHAR(100)  NOT NULL,
     StateId               CHAR(15)       NOT NULL,
     EffectiveDate         TIMESTAMP      NOT NULL,
-    TerminationDate       TIMESTAMP      NOT NULL
+    TerminationDate       TIMESTAMP      NOT NULL,
+    PRIMARY KEY (ProviderId, CertificateId),
+    FOREIGN KEY (ProviderId) REFERENCES V_provider(ProviderId)
 );
 
 CREATE TABLE V_providertaxid (
@@ -110,18 +129,22 @@ CREATE TABLE V_providertaxid (
     TaxIdType             VARCHAR(20),
     LegalName             VARCHAR(95),
     EffectiveDate         TIMESTAMP      NOT NULL,
-    TerminationDate       TIMESTAMP      NOT NULL
+    TerminationDate       TIMESTAMP      NOT NULL,
+    PRIMARY KEY (ProviderId, TaxId),
+    FOREIGN KEY (ProviderId) REFERENCES V_provider(ProviderId)
 );
 
 CREATE TABLE V_providertaxonomy (
     ProviderId            BIGINT         NOT NULL,
     TaxonomyCode          CHAR(30)       NOT NULL,
     EffectiveDate         TIMESTAMP      NOT NULL,
-    TerminationDate       TIMESTAMP      NOT NULL
+    TerminationDate       TIMESTAMP      NOT NULL,
+    PRIMARY KEY (ProviderId, TaxonomyCode),
+    FOREIGN KEY (ProviderId) REFERENCES V_provider(ProviderId)
 );
 
 CREATE TABLE V_providertype (
-    ProviderType              VARCHAR(20)    NOT NULL,
+    ProviderType              VARCHAR(20)    NOT NULL PRIMARY KEY,
     ProviderTypeDescription   VARCHAR(100)   NOT NULL,
     ProviderClass             BIGINT         NOT NULL,
     IsGroup                   BOOLEAN        NOT NULL,

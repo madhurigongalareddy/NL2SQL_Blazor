@@ -9,13 +9,13 @@
 @inject QueryHistoryService QueryHistoryService
 @using System.Data
 @using NL2SQL_Blazor.Components.Models
-
+<PageTitle>NLQuery Engine</PageTitle>
 <style>
     .result-table-container {
     height: 350px;
     width: 950px;
     overflow: auto;
-    border: 1px solid #1976d2;
+        border: 1px solid #2b5389;
     background: #f5f7fa;
     padding: 8px;
     --border-radius: 6px;
@@ -26,19 +26,20 @@
     min-width: 900px;
     }
     .result-table th, .result-table td {
-    border: 1px solid #1976d2;
+            border: 1px solid #2b5389;
     padding: 6px 10px;
     text-align: left;
     }
+
     .result-table th {
-    background-color: #1976d2;
-    color: #fff;
+           background: #2b5389;
+        color: #fff;
+        font-weight: 700;
     }
-    .result-table tr:nth-child(even) {
-    background-color: #e3eafc;
-    }
+
+    .result-table tr:nth-child(even),
     .result-table tr:nth-child(odd) {
-    background-color: #fff;
+        background: #f5f7fa; /* Use a neutral, light background for all rows */
     }
 
     .tableclass{
@@ -53,7 +54,7 @@
     vertical-align: top;           
     width:100%;
     font-family:Arial;
-    font-size:15px;
+    font-size: 0.80rem;
 
     }
     .tdwidth{
@@ -69,14 +70,16 @@
     vertical-align: top;
     }
     .textareainput{
-    width:800px ;
-    height :75px;
+    width:830px ;
+    height :50px;
     }
     .textarearesult
     {
-    width:800px; 
+    width:830px; 
     height : 100px;
     scroll-behavior:auto;
+    font-family:Arial;
+    font-size:0.80rem;   
     }
     .inputddl{
     width:200px;
@@ -126,6 +129,29 @@
         vertical-align: middle;
     }
 
+    .login-btn {
+        width: 100px;
+        font-weight: 500;
+        background: #2b5389;
+        color: #fff;
+        border: none;
+        border-radius: 1rem; /* More rounded corners */
+        padding: 0.75rem 0;
+        font-size: 0.95rem;
+        box-shadow: 0 2px 12px rgba(37,99,235,0.10);
+        transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+        margin: 0.5rem auto;
+        display: block;
+        letter-spacing: 0.03em;
+    }
+
+    .login-btn:hover, .login-btn:focus {
+            background: #5585a8;  
+            color: #fff;
+        box-shadow: 0 4px 20px rgba(214, 196, 139, 0.18);
+        outline: none;
+        transform: translateY(-2px) scale(1.03);
+    }
 
 </style>
 <script src="downloadFile.js"></script>
@@ -164,8 +190,8 @@
 
                 <tr>
                     <td class="tdtext"> <textarea class="textareainput" @bind="userInput" placeholder="Enter your question..."></textarea></td>
-                    <td valign="top" align="right" style="width: 150px">
-                        <button class="mt-2 btn btn-primary" @onclick="Convert" disabled="@isLoading">Convert</button>
+                    <td align="right" valign="top">
+                        <button class="login-btn" @onclick="Convert" disabled="@isLoading">Convert</button>
                         @if (isLoading)
                         {
                             <div class="mt-2 text-primary">
@@ -185,18 +211,13 @@
                                     <td>
                                         <textarea class="textarearesult" @bind="queryOutput"></textarea>
                                     </td>
-                                    <td align="right" valign="top" style="width: 150px">
-                                        <button class="mt-2 btn btn-primary" @onclick="ExecuteSql" disabled="@isExecuting">
-                                            @if (isExecuting)
-                                            {
-                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                <span class="visually-hidden">Executing...</span>
-                                            }
-                                            else
-                                            {
-                                                <span>Execute</span>
-                                            }
-                                        </button>
+                                    <td align="right" valign="top">
+                                        <button class="login-btn" @onclick="ExecuteSql" disabled="@isExecuting">Execute</button>
+                                        @if (isExecuting)
+                                        {
+                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Executing...</span>
+                                        }                                        
                                     </td>
                                 </tr>
                                 @if (!string.IsNullOrEmpty(alternativeCmd))
@@ -221,7 +242,7 @@
                                 @if (!string.IsNullOrEmpty(queryOutput) && !isLoading && dtResult != null && dtResult.Columns.Count > 0)
                                 {
                                     <div style="text-align: right; margin-bottom: 5px;">
-                                        <a href="/nl-to-sql" @onclick:preventDefault="true" style="font-size: 15px; color: darkgreen; text-decoration: underline; cursor: pointer;" @onclick="ExportGridToText">Export Result</a>
+                                        <a href="/nl-to-sql" @onclick:preventDefault="true" style="font-size: 0.80rem; color: #2b5389; text-decoration: underline; cursor: pointer;" @onclick="ExportGridToText">Export Result</a>
                                     </div>
                                 }
 
@@ -274,7 +295,7 @@
                                 @if (activeTab == 0)
                                 {
                                     <div class="tab-pane fade show active" id="frequent" role="tabpanel">
-                                        <div style="height: 400px; overflow-y: auto; font-size: 13px; line-height: 2;">
+                                        <div style="height: 400px; overflow-y: auto; font-size: 11px; line-height: 2;">
                                             @foreach (var prompt in prompts)
                                             {
                                                 <a href="/nl-to-sql" @onclick="() => SetPrompt(prompt)" style="cursor:pointer;">@prompt</a>
@@ -287,7 +308,7 @@
                                 @if (activeTab == 1)
                                 {
                                     <div class="tab-pane fade show active" id="custom" role="tabpanel">
-                                        <div style="height: 400px; overflow-y: auto; font-size: 13px; line-height: 1.2;">
+                                        <div style="height: 400px; overflow-y: auto; font-size: 11px; line-height: 2;">
                                             @if (recentQueries.Count == 0)
                                             {
                                                 <p>No history yet.</p>

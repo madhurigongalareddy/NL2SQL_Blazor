@@ -3,10 +3,9 @@
 
 <style>
     .home-content, .help-content {
-        font-family: 'Segoe UI', Arial, sans-serif;
-        font-size: 0.95rem;
+        font-family: Arial;/*'Segoe UI', Arial, sans-serif;*/
+        font-size: 0.80rem;
         color: #222;
-        /* Remove margin: 0 auto; to left-align */
         margin-left: 0;
     }
 
@@ -28,7 +27,7 @@
 
         .home-content p, .home-content ul, .home-content ol,
         .help-content p, .help-content ul, .help-content ol {
-            font-size: 0.95rem;
+            font-size: 0.80rem;
             color: #222;
             margin-bottom: 0.5rem;
         }
@@ -42,6 +41,28 @@
         .home-content section, .help-content section {
             margin-bottom: 1rem;
         }
+
+
+    .menu-link, .help-link, .home-link {
+        font-family: 'Segoe UI', 'Arial', sans-serif;
+        font-weight: 800;
+        font-size: inherit;
+        color: #1a237e; /* Deep blue, matches standard menu bar */
+        background: none;
+        -webkit-background-clip: initial;
+        -webkit-text-fill-color: initial;
+        background-clip: initial;
+        text-fill-color: initial;
+        letter-spacing: 1.2px;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .menu-link:hover, .help-link:hover, .home-link:hover {
+        color: #2575fc; /* Lighter blue on hover */
+        -webkit-text-fill-color: #2575fc;
+        text-fill-color: #2575fc;
+    }
 </style>
 
 

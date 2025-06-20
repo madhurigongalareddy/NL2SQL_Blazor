@@ -4,7 +4,16 @@
 @rendermode InteractiveServer
 @using NL2SQL_Blazor.Components.Models
 
+<PageTitle>Configuration</PageTitle>
 <h3>User List</h3>
+<style>
+    .grid-content {
+        font-family: Arial; /*'Segoe UI', Arial, sans-serif;*/
+        font-size: 0.80rem;
+        color: #222;
+        margin-left: 0;
+    }
+</style>
 
 @if (users == null)
 {
@@ -24,7 +33,7 @@ else
                 <th>Role</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="grid-content">
             @foreach (var user in users)
             {
                 <tr>
@@ -39,7 +48,7 @@ else
                         }
                         else
                         {
-                            <button class="btn btn-sm btn-primary" @onclick="() => EditRole(user)">Edit</button>
+                            @* <button class="btn btn-sm btn-primary" @onclick="() => EditRole(user)">Edit</button> *@
                         }
                     </td>
                 </tr>
@@ -70,7 +79,7 @@ else
                 <th></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="grid-content">
             @foreach (var product in products)
             {
                 <tr>
