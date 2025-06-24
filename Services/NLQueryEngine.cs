@@ -44,6 +44,8 @@ public class NLQueryEngine
             var request = new
             {
                 model = "llama3.2",
+                //model = "deepseek-r1",
+                //model = "gemma3",
                 messages = new[]
                 {
                     new { role = "system", content = systemprompt },
@@ -140,6 +142,7 @@ public class NLQueryEngine
             $"needed (e.g., NOW(), AGE()).\n - Join tables correctly using primary/foreign keys only when it is required. \n - Always include WHERE clauses based on user filters.\n - " +
             $"Use explicit column names (never SELECT *).\n - Apply aggregation functions (SUM, COUNT, AVG, etc.) when requested.\n - Format dates in 'YYYY-MM-DD' format.\n - " +
             $"Avoid using reserved keywords as aliases.\n - Use LIMIT and OFFSET for top-N queries (if needed).\n - Always alias tables for clarity." +
+            $"Please dont pull PHI and PII data" +
             $"\n - NEVER use SUBSTR, SUBSTRING, LEFT, RIGHT,STRFTIME, DATE_FORMAT, or any string manipulation functions to extract date parts from date columns. Use EXTRACT or date_trunc for date parts if needed.\n" +
             $" - All date fields are stored as DATE or TIMESTAMP. You can directly compare date fields without conversions.\n - Always filter dates before aggregation whenever possible to improve query performance.\n " +
             $"### Database Schema:\n **{sqlSchema.Result}\n ### Output Format:\n Only output valid PostgreSQL code. Do not explain the query.Do not guess columns or tables if not in the " +
@@ -154,7 +157,7 @@ public class NLQueryEngine
            $"needed (e.g., GETDATE(), DATEDIFF()).\n - Join tables correctly using primary/foreign keys only when it is required. \n - Always include WHERE clauses based on user filters.\n - " +
            $"Use explicit column names (never SELECT *).\n - Apply aggregation functions (SUM, COUNT, AVG, etc.) when requested.\n - Format dates in 'YYYY-MM-DD' format.\n - " +
            $"Avoid using reserved keywords as aliases.\n - Use OFFSET ... FETCH for top-N queries (if needed).\n - " +
-           //$"Always alias tables for clarity." +
+           $"Please dont pull PHI and PII data" + //$"Always alias tables for clarity." +
            $"\n - NEVER use SUBSTR, SUBSTRING, LEFT, RIGHT,STRFTIME, DATE_FORMAT, or any string manipulation functions to extract date parts and date filters\n - All date fields are stored as DATE or DATETIME." +
            $" You can directly compare date fields without conversions.\n - Always filter data before aggregation whenever possible to improve query performance.\n " +
            $"### Database Schema:\n **{sqlSchema.Result}\n ### Output Format:\n Only output valid T-SQL code. Do not explain the query.Do not guess columns or tables if not in the provided schema." +

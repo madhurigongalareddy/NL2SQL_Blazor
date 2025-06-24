@@ -9,7 +9,7 @@ CREATE TABLE dbo.V_Claims_Header(
 	Claim_Status VARCHAR(10) NOT NULL,
 	SubmissionDate DATETIME NOT NULL,
 	formtype VARCHAR(15) NOT NULL,
-	Total_ClaimAmount MONEY NOT NULL,
+	Paid_Amount MONEY NOT NULL,
 	Plan_Id VARCHAR(15) NOT NULL,
 	Paid_Date DATETIME NULL,
 	CONSTRAINT PKclaim PRIMARY KEY CLUSTERED 
