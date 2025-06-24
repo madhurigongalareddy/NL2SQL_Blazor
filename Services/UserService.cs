@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using NL2SQL_Blazor.Components.Models;
 using static DatabaseEngine;
 using Product = NL2SQL_Blazor.Components.Models.Product;
@@ -55,6 +56,39 @@ public class UserService
         return userProducts
             .Where(up => users.Any(u => u.UserId == up.UserId))
             .ToList();
+    }
+    public async Task<List<User>> GetUserProductsDetailsAsync()
+    {
+        var users = new List<User>(); // Initialize the list to avoid null reference issues
+        var userProducts = await GetUserProductsAsync();
+        foreach (var userProduct in userProducts)
+        {
+            var product = await _productService.GetProductByIdAsync(userProduct.ProductId);
+            var user = await GetUserByIdAsync(userProduct.UserId);
+            if (product != null && user != null)
+            {
+                users.Add(new User
+                {
+                    UserId = user.UserId,
+                    Username = user.Username,
+                    Role = user.Role,
+                    Name = user.Name,
+                    ProductName = product.FirstOrDefault()?.ProductName
+                });
+            }
+        }
+        return users; // Ensure a value is returned in all code paths
+    }
+
+    private async Task<User> GetUserByIdAsync(int userId)
+    {
+        var users = await GetUsersAsync();
+        var user = users.FirstOrDefault(u => u.UserId == userId);
+        if (user == null)
+        {
+            throw new KeyNotFoundException($"User with ID {userId} not found.");
+        }
+        return user;
     }
 
     /// <summary>

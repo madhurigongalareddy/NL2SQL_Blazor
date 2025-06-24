@@ -5,13 +5,20 @@
 @using NL2SQL_Blazor.Components.Models
 
 <PageTitle>Configuration</PageTitle>
-<h3>User List</h3>
+<h5>User List</h5>
 <style>
     .grid-content {
         font-family: Arial; /*'Segoe UI', Arial, sans-serif;*/
-        font-size: 0.80rem;
+        font-size: 0.75rem;
         color: #222;
         margin-left: 0;
+    }
+
+    .ddl {
+        font-family: Arial; /*'Segoe UI', Arial, sans-serif;*/
+        font-size: 0.75rem;
+        color: #222;
+        width: 150px;
     }
 </style>
 
@@ -57,7 +64,7 @@ else
     </table>
 }
 
-<h3 class="mt-4">Product List</h3>
+<h5 class="mt-4">Product List</h5>
 
 @if (products == null)
 {
@@ -113,11 +120,52 @@ else
     </table>
 }
 
+<h5 class="mt-4">User-Product Mapping</h5>
+
+@if (userProductMappings == null)
+{
+    <p><span class="spinner-border spinner-border-sm"></span> Loading...</p>
+}
+else if (userProductMappings.Count == 0)
+{
+    <p>No user-product mappings found.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>Product Name</th>
+            </tr>
+        </thead>
+        <tbody class="grid-content">
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Username</td>
+                    <td>
+                        <select class="ddl">
+                            @foreach (var mapping in userProductMappings.Where(id => id.UserId == user.UserId))
+                            {
+                                <option  value="@mapping.ProductName">@mapping.ProductName</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 @code {
+
     /// <summary>
     /// List of users loaded from the UserService.
     /// </summary>
     private List<NL2SQL_Blazor.Components.Models.User> users;
+    private List<NL2SQL_Blazor.Components.Models.Product> products;
+    private List<NL2SQL_Blazor.Components.Models.User> userProductMappings;
 
     /// <summary>
     /// List of available product names for user assignment.
@@ -137,7 +185,7 @@ else
     /// <summary>
     /// List of products loaded from the ProductService.
     /// </summary>
-    private List<NL2SQL_Blazor.Components.Models.Product> products;
+
 
     /// <summary>
     /// The Id of the product currently being edited, or null if none.
@@ -156,6 +204,7 @@ else
     {
         users = await UserService.GetUsersAsync();
         products = await ProductService.GetProductsAsync();
+        userProductMappings = await UserService.GetUserProductsDetailsAsync();
     }
 
     /// <summary>

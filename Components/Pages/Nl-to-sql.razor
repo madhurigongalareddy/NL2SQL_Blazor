@@ -241,8 +241,10 @@
                                 
                                 @if (!string.IsNullOrEmpty(queryOutput) && !isLoading && dtResult != null && dtResult.Columns.Count > 0)
                                 {
-                                    <div style="text-align: right; margin-bottom: 5px;">
-                                        <a href="/nl-to-sql" @onclick:preventDefault="true" style="font-size: 0.80rem; color: #2b5389; text-decoration: underline; cursor: pointer;" @onclick="ExportGridToText">Export Result</a>
+                                    <div style="text-align: right; margin-bottom: 5px; padding-right:20px">
+                                        <a href="/nl-to-sql" @onclick:preventDefault="true" title="Export" @onclick="ExportGridToText">
+                                            <img src="/excel_blue.png" style="height:40px" />
+                                        </a>
                                     </div>
                                 }
 
