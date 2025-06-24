@@ -15,6 +15,35 @@ public class QueryHistoryService
     // Save a query with username
     public async Task AddAsync(string query, string username)
     {
+        // Check for duplicate
+        if (File.Exists(_filePath))
+        {
+            var lines = await File.ReadAllLinesAsync(_filePath);
+            string lastUser = null;
+            string lastQuery = null;
+
+            // Scan backwards for efficiency (most recent at the end)
+            for (int i = lines.Length - 1; i >= 0; i--)
+            {
+                if (lines[i].StartsWith("User: "))
+                    lastUser = lines[i].Substring(6).Trim();
+                else if (lines[i].StartsWith("Query: "))
+                    lastQuery = lines[i].Substring(7).Trim();
+
+                if (!string.IsNullOrEmpty(lastUser) && !string.IsNullOrEmpty(lastQuery))
+                {
+                    if (lastUser == username && lastQuery == query)
+                    {
+                        // Duplicate found, do not add
+                        return;
+                    }
+                    // Reset for next entry
+                    lastUser = null;
+                    lastQuery = null;
+                }
+            }
+        }
+
         var entry = new StringBuilder();
         entry.AppendLine("----- Query Executed -----");
         entry.AppendLine($"Timestamp: {DateTime.UtcNow:O}");
@@ -61,4 +90,6 @@ public class QueryHistoryService
             .Select(x => x.Query)
             .ToList();
     }
+
+
 }
