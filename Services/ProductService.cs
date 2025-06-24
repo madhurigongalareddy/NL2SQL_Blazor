@@ -11,9 +11,9 @@ public class ProductService
     /// </summary>
     public readonly List<Product> _products = new()
     {
-        new Product { Id = 1, ProductName = "Claims", DBServerName = "MS-SQL", Version = "2019" },
-        new Product { Id = 2, ProductName = "Provider", DBServerName = "PostgreSQL", Version = "2024" },
-        new Product { Id = 3, ProductName = "Member", DBServerName = "MS-SQL", Version = "2019" }
+        new Product { Id = 1, ProductName = "Claims Administrator", DBServerName = "MS-SQL", Version = "2019" },
+        new Product { Id = 2, ProductName = "Provider Enrollment", DBServerName = "PostgreSQL", Version = "2024" },
+        new Product { Id = 3, ProductName = "Pharmacy Management", DBServerName = "MS-SQL", Version = "2019" }
     };
 
     /// <summary>

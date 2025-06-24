@@ -239,14 +239,16 @@
                             @if (dtResult != null)
                             {
                                 
-                                @if (!string.IsNullOrEmpty(queryOutput) && !isLoading && dtResult != null && dtResult.Columns.Count > 0)
-                                {
-                                    <div style="text-align: right; margin-bottom: 5px; padding-right:20px">
-                                        <a href="/nl-to-sql" @onclick:preventDefault="true" title="Export" @onclick="ExportGridToText">
-                                            <img src="/excel_blue.png" style="height:40px" />
-                                        </a>
+                               
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                        <span style="font-weight: bold; font-family: Arial; font-size: 15px; color: #1976d2;">Query Results</span>
+                                        @if (!string.IsNullOrEmpty(queryOutput) && !isLoading && dtResult != null && dtResult.Columns.Count > 0)
+                                        {
+                                            <a href="/nl-to-sql" @onclick:preventDefault="true" title="Export" @onclick="ExportGridToText">
+                                                <img src="/excel_blue.png" style="height:38px" />
+                                            </a>
+                                        }
                                     </div>
-                                }
 
                                 <div class="result-table-container">
                                     <table class="result-table">
